@@ -1,0 +1,27 @@
+body,
+head,
+h1,h2,h3,
+p{
+    margin: 0;
+    padding: 0;
+}
+
+.container{
+    .login-table{
+        width: 40%;
+        padding: 20px;
+        margin: 10% auto 0 auto;
+        .header{
+            text-align: center;
+            font-size: 30px;
+            color: #40bdb2;
+            line-height: 60px;
+        }
+        .main{
+            .sureBtn{
+                margin-left: 30%;
+            }
+        }
+    }
+}
+
