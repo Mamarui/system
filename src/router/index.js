@@ -113,11 +113,17 @@ export const constantRoutes = [
 
   {
     path: '/user-business',
-    name: '用户管理-商家管理',
+    name: '用户管理',
     component: Layout,
     redirect: '/user-business',
-    meta: { title: '用户管理-商家管理', icon: 'dashboard' },
+    meta: { title: '用户管理', icon: 'dashboard' },
     children: [
+      {
+        path: 'businessManage',
+        name: '商家管理',
+        component: () => import('@/views/user-business/businessManage'),
+        meta: { title: '商家管理', icon: 'dashboard' }
+      },
       {
         path: 'orderUser',
         name: '订单用户',
@@ -156,6 +162,12 @@ export const constantRoutes = [
     redirect: '/financeManage',
     meta: { title: '资金管理', icon: 'dashboard' },
     children: [
+      {
+        path: 'platFinance',
+        name: '平台资金',
+        component: () => import('@/views/financeManage/platFinance'),
+        meta: { title: '平台资金', icon: 'dashboard' }
+      },
       {
         path: 'platIncome',
         name: '平台收入',
