@@ -112,28 +112,28 @@ export const constantRoutes = [
   },
 
   {
-    path: '/user-business',
+    path: '/userManage',
     name: '用户管理',
     component: Layout,
-    redirect: '/user-business',
+    redirect: '/userManage',
     meta: { title: '用户管理', icon: 'dashboard' },
     children: [
       {
         path: 'businessManage',
         name: '商家管理',
-        component: () => import('@/views/user-business/businessManage'),
+        component: () => import('@/views/userManage/businessManage'),
         meta: { title: '商家管理', icon: 'dashboard' }
       },
       {
         path: 'orderUser',
         name: '订单用户',
-        component: () => import('@/views/user-business/orderUser'),
+        component: () => import('@/views/userManage/orderUser'),
         meta: { title: '订单用户', icon: 'dashboard' }
       },
       {
         path: 'orderUserDetail',
         name: '订单用户详情',
-        component: () => import('@/views/user-business/orderUserDetail'),
+        component: () => import('@/views/userManage/orderUserDetail'),
         meta: { title: '订单用户详情', icon: 'dashboard' }
       },
     ]
