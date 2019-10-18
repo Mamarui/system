@@ -67,7 +67,7 @@
             </span>
         </el-dialog>
         <!-- 删除 弹窗 -->
-        <el-dialog title="货柜类型删除" :visible.sync="delete_visible" width="30%" @close="closeDialog">
+        <el-dialog title="货柜类型删除" :visible.sync="delete_visible" width="30%" @close="closeDialog" :close-on-click-modal='false'>
             <span v-show="deletefail" style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>该类型的货柜数量不为0，不能删除！</span>
             <span v-show="deletesuccess" style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>确定删除该类型的货柜么？</span>
             <span slot="footer" class="dialog-footer">
@@ -89,9 +89,14 @@
                 }
             }
         }
+        .el-main{
+            margin: 0;
+            padding: 0;
+        }
         .footer{
             .pages{
                 float: right;
+                margin-top: 10px;
             }
         }
         .set_add_form{

@@ -41,7 +41,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        name: '首页',
+        name: 'index',
         component: () => import('@/views/index'),
         meta: { title: '首页', icon: 'dashboard' }
       }
@@ -58,31 +58,31 @@ export const constantRoutes = [
     children: [
       {
         path: 'login',
-        name: '登录',
+        name: 'login',
         component: () => import('@/views/login/index'),
         meta: { title: '登录', icon: 'dashboard' }
       },
       {
         path: 'forgetPassword',
-        name: '忘记密码',
+        name: 'forgetPassword',
         component: () => import('@/views/login/forgetPassword'),
         meta: { title: '忘记密码', icon: 'dashboard' }
       },
       {
         path: 'renewPassword',
-        name: '重置密码',
+        name: 'renewPassword',
         component: () => import('@/views/login/renewPassword'),
         meta: { title: '重置密码', icon: 'dashboard' }
       },
       {
         path: 'fixPayPassword',
-        name: '修改交易密码',
+        name: 'fixPayPassword',
         component: () => import('@/views/login/fixPayPassword'),
         meta: { title: '修改交易密码', icon: 'dashboard' }
       },
       {
         path: 'renewPayPassword',
-        name: '重置交易密码',
+        name: 'renewPayPassword',
         component: () => import('@/views/login/renewPayPassword'),
         meta: { title: '重置交易密码', icon: 'dashboard' }
       }
@@ -98,13 +98,13 @@ export const constantRoutes = [
     children: [
       {
         path: 'deviceDistribute',
-        name: '设备分配',
+        name: 'deviceDistribute',
         component: () => import('@/views/deviceManage/deviceDistribute'),
         meta: { title: '设备分配', icon: 'dashboard' }
       },
       {
         path: 'deviceType',
-        name: '设备型号',
+        name: 'deviceType',
         component: () => import('@/views/deviceManage/deviceType'),
         meta: { title: '设备型号', icon: 'dashboard' }
       }
@@ -120,21 +120,15 @@ export const constantRoutes = [
     children: [
       {
         path: 'businessManage',
-        name: '商家管理',
+        name: 'businessManage',
         component: () => import('@/views/userManage/businessManage'),
         meta: { title: '商家管理', icon: 'dashboard' }
       },
       {
         path: 'orderUser',
-        name: '订单用户',
+        name: 'orderUser',
         component: () => import('@/views/userManage/orderUser'),
         meta: { title: '订单用户', icon: 'dashboard' }
-      },
-      {
-        path: 'orderUserDetail',
-        name: '订单用户详情',
-        component: () => import('@/views/userManage/orderUserDetail'),
-        meta: { title: '订单用户详情', icon: 'dashboard' }
       },
     ]
   },
@@ -148,7 +142,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'orderManage',
-        name: '订单管理',
+        name: 'orderManage',
         component: () => import('@/views/orderManage'),
         meta: { title: '订单管理', icon: 'dashboard' }
       },
@@ -164,31 +158,31 @@ export const constantRoutes = [
     children: [
       {
         path: 'platFinance',
-        name: '平台资金',
+        name: 'platFinance',
         component: () => import('@/views/financeManage/platFinance'),
         meta: { title: '平台资金', icon: 'dashboard' }
       },
       {
         path: 'platIncome',
-        name: '平台收入',
+        name: 'platIncome',
         component: () => import('@/views/financeManage/platIncome'),
         meta: { title: '平台收入', icon: 'dashboard' }
       },
       {
         path: 'businessIncome',
-        name: '商家收入',
+        name: 'businessIncome',
         component: () => import('@/views/financeManage/businessIncome'),
-        meta: { title: '设备管理', icon: 'dashboard' }
+        meta: { title: '商家收入', icon: 'dashboard' }
       },
       {
         path: 'managerRakeback',
-        name: '管理员返佣',
+        name: 'managerRakeback',
         component: () => import('@/views/financeManage/managerRakeback'),
         meta: { title: '管理员返佣', icon: 'dashboard' }
       },
       {
         path: 'rakebackSet',
-        name: '返佣设置',
+        name: 'rakebackSet',
         component: () => import('@/views/financeManage/rakebackSet'),
         meta: { title: '返佣设置', icon: 'dashboard' }
       }

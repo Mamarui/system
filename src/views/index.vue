@@ -56,6 +56,10 @@
 			width: 100%;
 			height: 400px;
 			position: relative;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-around;
 			.tab_one,.tab_two{
 				width: 40%;
 				height: 400px;
@@ -96,8 +100,11 @@
 			height: 500px;
 			position: relative;
 			margin-top: 2%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 			.table_chart{
-				width: 90%;
+				width: 95%;
 				padding: 1%;
 				height: 500px;
 				background-color: #E6E6E6;
@@ -105,13 +112,13 @@
 			.stateBox{
 				position: absolute;
 				top: 2%;
-				left: 2%;
+				left: 5%;
 			}
 			.dateBox{
 				width: 500px;
 				height: 50px;
 				position: absolute;
-				right: 15%;
+				right: 10%;
 				top: 2%;
 				display: flex;
 				flex-direction: row;

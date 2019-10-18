@@ -1,6 +1,6 @@
 <template>
     <el-container class="container">
-        <div class="header">
+        <el-header class="header">
             <el-form :inline="true" :model="searchForm" class="form">
                 <el-form-item label="货柜型号">
                     <el-select v-model="searchForm.type">
@@ -27,7 +27,7 @@
                     <el-button type="primary" @click="set_add_visible = true"><svg-icon icon-class="add" style="margin-right:5px;"/>添加</el-button>
                 </el-form-item>
             </el-form>
-        </div>
+        </el-header>
         <el-main class="main">
             <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" border>
                 <el-table-column type="selection" width="40" align="center"></el-table-column>
@@ -99,7 +99,7 @@
             </span>
         </el-dialog>
         <!-- 清除/删除 第一次提示弹窗 -->
-        <el-dialog :title="curTitle" :visible.sync="curVisible" width="30%" @close="curVisible = false">
+        <el-dialog :title="curTitle" :visible.sync="curVisible" width="30%" @close="curVisible = false" :close-on-click-modal='false'>
             <span style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>{{curMention}}</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="curVisible = false">取 消</el-button>
@@ -107,7 +107,7 @@
             </span>
         </el-dialog>
         <!-- 清除/删除 第二次提示弹窗 -->
-        <el-dialog title="输入密码" :visible.sync="curShowOne" width="30%" @close="closeDialog">
+        <el-dialog title="输入密码" :visible.sync="curShowOne" width="30%" @close="closeDialog" :close-on-click-modal='false'>
             <p v-show="curShowTwo" class="curShowTwo"><span>交易密码 ：</span> <el-input v-model="buyPassword" placeholder="请输入交易密码"></el-input></p>
             <span style="font-size:18px;" v-show="curShowThree"><i class="el-icon-success" style="margin-right:5px;"></i>操作成功！</span>
             <span style="font-size:18px;" v-show="curShowFour"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码错误，你今天还有3次机会！</span>
@@ -118,7 +118,7 @@
             </span>
         </el-dialog>
         <!-- 表格 -- 配置/添加 弹窗 不同商家 -->
-        <el-dialog title="批量配置提示" :visible.sync="set_mention_visible" width="30%" @close="setVisible = false">
+        <el-dialog title="批量配置提示" :visible.sync="set_mention_visible" width="30%" @close="setVisible = false" :close-on-click-modal='false'>
             <span style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>你选中的设备已分配给了不同的商家，继续配置后原商家将无法管理该货柜！</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="setVisible = false">取 消</el-button>
@@ -185,12 +185,18 @@
                 }
             }
         }
+        .el-main{
+            margin: 0;
+            padding: 0;
+        }
         .footer{
             .buttons{
                 float: left;
+                margin-top: 10px;
             }
             .block{
                 float: right;
+                margin-top: 10px;
             }
         }
         /**配置/添加弹窗样式 */
