@@ -41,7 +41,7 @@
             <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.curpage" :page-sizes="searchForm.pagesizes" :page-size="searchForm.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="searchForm.total"></el-pagination>
         </el-footer>
         <!-- 表格 -- 配置 弹窗 -->
-        <el-dialog title="配置返佣" :visible.sync="set_visible" width="35%" center :close-on-click-modal='false'>
+        <el-dialog title="配置返佣" :visible.sync="set_visible" width="35%" center :close-on-click-modal='false' @close="set_cancel">
             <div class="userInfo">
                 <p><span>商家名称 ：</span>天上人间</p>
                 <p><span>货柜数量 ：</span>30</p>
@@ -226,10 +226,21 @@ export default {
         },
         /** 弹窗操作 -- 取消 */
         set_cancel(){
+            this.set_form = {                  //配置 弹窗 表单
+                businessratio:'',
+                business:'',
+                businessaccount:'',
+                manager:'',
+                mobile:'',
+                managerratio:'',
+                manageraccount:''
+            };
+            this.set_visible = false;
             console.log(this.set_form)
         },
         /** 弹窗操作 -- 确定 */
         set_sure(){
+            this.set_visible = false;
             console.log(this.set_form)
         } ,
 

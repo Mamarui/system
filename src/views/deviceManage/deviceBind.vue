@@ -2,34 +2,28 @@
     <el-container class="container">
         <el-header class="header">
             <el-form :inline="true" :model="searchForm" class="form">
-                <el-form-item label="创建时间">
-                    <el-date-picker v-model="day_one" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
-                    <span> - </span>
-                    <el-date-picker v-model="day_two" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
-                </el-form-item>
                 <el-form-item>
-                    <el-input v-model="searchForm.type" placeholder="请输入货柜类型"></el-input>
+                    <el-input v-model="searchForm.type" placeholder="请输入DTU编号/货柜编号/货柜型号"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
-                    <el-button type="primary" @click="set_add_visible = true"><svg-icon icon-class="add" style="margin-right:5px;"/>添加</el-button>
                 </el-form-item>
             </el-form>
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
+                <el-table-column prop="dtuCode" label="DTU编号" align="center"></el-table-column>
+                <el-table-column prop="dtuState" label="DTU状态" align="center"></el-table-column>
+                <el-table-column prop="code" label="货柜编号" align="center"></el-table-column>
                 <el-table-column prop="type" label="货柜型号" align="center"></el-table-column>
-                <el-table-column prop="volume" label="容量" align="center"></el-table-column>
                 <el-table-column prop="specifications" label="规格(cm)" align="center"></el-table-column>
-                <el-table-column prop="layer" label="层数" align="center"></el-table-column>
-                <el-table-column prop="unitprice" label="单价(元)" align="center"></el-table-column>
-                <el-table-column prop="number" label="数量" align="center"></el-table-column>
+                <el-table-column prop="volume" label="容量" align="center"></el-table-column>
                 <el-table-column prop="createTime" label="创建时间" align="center" width="200"></el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" align="center" width="200"></el-table-column>
                 <el-table-column label="操作" align="center" width="150">
                     <template slot-scope="scope">
+                        <el-button @click.native.prevent="setCode(scope.$index)" type="text">二维码</el-button>
                         <el-button @click.native.prevent="edit(scope.$index)" type="text">编辑</el-button>
-                        <el-button @click.native.prevent="deletes(scope.$index)" type="text">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -38,27 +32,37 @@
             <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.curpage" :page-sizes="searchForm.pagesizes" :page-size="searchForm.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="searchForm.total"></el-pagination>
         </el-footer>
         <!-- 添加/编辑 弹窗 -->
-        <el-dialog title="货柜型号编辑/添加" :visible.sync="set_add_visible" width="35%" center :close-on-click-modal='false'>
+        <el-dialog title="设备绑定" :visible.sync="set_add_visible" width="35%" center :close-on-click-modal='false'>
             <el-form :model="set_add_form" class="set_add_form" :rules="set_add_rule" ref="set_add_form" label-width="120px">
+                <el-form-item label="货柜编号" prop="code">
+                    <el-input v-model="set_add_form.code" placeholder="请输入货柜编号（二维码）"></el-input>
+                </el-form-item>
                 <el-form-item label="货柜型号" prop="type">
-                    <el-input v-model="set_add_form.type" placeholder="请输入货柜型号"></el-input>
+                    <el-radio-group v-model="set_add_form.type" @change="changeType">
+                        <el-radio label="已有型号"></el-radio>
+                        <el-radio label="新型号"></el-radio>
+                    </el-radio-group>
+                    <el-select v-model="set_add_form.hasType" placeholder="请选择" v-show="!isNew" style="width:80%;">
+                        <el-option label="型号一" value="0"></el-option>
+                        <el-option label="型号二" value="1"></el-option>
+                    </el-select>
+                    <el-input v-model="set_add_form.newType" placeholder="请输入货柜型号" v-show="isNew"></el-input>
+                </el-form-item>
+                <el-form-item label="规格" prop="specifications">
+                    <el-input v-model="set_add_form.width" placeholder="货柜宽度" style="width:38%"></el-input>
+                    <span class="cm_left">厘米</span>
+                    <b> * </b>
+                    <el-input v-model="set_add_form.height" placeholder="货柜高度" style="width:39%"></el-input>
+                    <span class="cm_right">厘米</span>
                 </el-form-item>
                 <el-form-item label="容量" prop="volume">
                     <el-input v-model="set_add_form.volume" placeholder="请输入货柜的总容量"></el-input>
                 </el-form-item>
-                <el-form-item label="规格" prop="specifications">
-                    <el-input v-model="set_add_form.specifications" placeholder="请输入货柜的尺寸规格"></el-input>
-                    <span>厘米</span>
+                <el-form-item label="DTU编号" prop="dtuCode">
+                    <el-input v-model="set_add_form.dtuCode" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="层数" prop="layer">
-                    <el-input v-model="set_add_form.layer" placeholder="请输入货柜层数"></el-input>
-                </el-form-item>
-                <el-form-item label="单价" prop="unitprice">
-                    <el-input v-model="set_add_form.unitprice" placeholder="请输入货柜的单价"></el-input>
-                    <span>元</span>
-                </el-form-item>
-                <el-form-item label="数量">
-                    <el-input v-model="set_add_form.number" disabled></el-input>
+                <el-form-item label="DTU状态" prop="dtuState">
+                    <el-input v-model="set_add_form.dtuState" disabled></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -66,13 +70,14 @@
                 <el-button @click="set_add_sure">确 定</el-button>
             </span>
         </el-dialog>
-        <!-- 删除 弹窗 -->
-        <el-dialog title="货柜类型删除" :visible.sync="delete_visible" width="30%" @close="closeDialog" :close-on-click-modal='false'>
-            <span v-show="deletefail" style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>该类型的货柜数量不为0，不能删除！</span>
-            <span v-show="deletesuccess" style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>确定删除该类型的货柜么？</span>
+        <!-- 二维码查看 -->
+        <el-dialog title="二维码查看" :visible.sync="code_view_visible" width="35%" center :close-on-click-modal='false' @close="closeCodeView">
+            <p class="imgTxt">DTU编号：13456465446  货柜编号：13415646</p>
+            <div class="imgBox">
+                <img src="../../assets/imgs/banner.jpg">
+            </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="closeDialog">取 消</el-button>
-                <el-button type="primary" @click="setClick(deletefail)">{{ deletefail ? '确定' : '删除' }}</el-button>
+                <el-button @click="set_add_sure">打 印</el-button>
             </span>
         </el-dialog>
     </el-container>
@@ -86,6 +91,10 @@
             .form{
                 .el-form-item{
                     margin-bottom: 0;
+                    margin-right: 120px;
+                    .el-input{
+                        width: 140%;
+                    }
                 }
             }
         }
@@ -107,8 +116,28 @@
                 }
                 span{
                     position: absolute;
-                    right: 110px;
                 }
+                .cm_left{
+                    right: 315px;
+                }
+                .cm_right{
+                    right: 115px;
+                }
+            }
+        }
+        /**二维码查看弹窗样式 */
+        .imgTxt{
+            font-size: 18px;
+            color: #c1c1c1;
+            margin: 0;
+        }
+        .imgBox{
+            width: 300px;
+            height: 300px;
+            margin: 10px auto 0 auto;
+            img{
+                width: 100%;
+                height: 100%;
             }
         }
     }
@@ -119,15 +148,12 @@ export default {
     data() {
         return {
             searchForm:{        //搜索表单
-                date:'',
                 type:'',
                 curpage:1,
                 pagesizes:[10,20,50,100],
                 pagesize:10,
                 total:100
             },
-            day_one:'',
-            day_two:'',
             pickerOptions:{
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -136,45 +162,53 @@ export default {
             set_add_visible:false,      //添加/编辑弹窗
             tableData:[         //表格数据
                 {
+                    dtuCode:'123456',
+                    dtuState:'断电',
+                    code:'xx1234564',
                     type:'xx123456',
-                    volume:'16',
                     specifications:'123*456',
-                    layer:'5',
-                    unitprice:'500.00',
-                    number:'16',
+                    volume:'16',
                     createTime:'2019/12/12 18:00:00',
                     updateTime:'2019/12/12 18:00:00'
                 },
                 {
+                    dtuCode:'123456',
+                    dtuState:'断电',
+                    code:'xx1234564',
                     type:'xx123456',
-                    volume:'16',
                     specifications:'123*456',
-                    layer:'5',
-                    unitprice:'500.00',
-                    number:'16',
+                    volume:'16',
                     createTime:'2019/12/12 18:00:00',
                     updateTime:'2019/12/12 18:00:00'
                 },
                 {
+                    dtuCode:'123456',
+                    dtuState:'断电',
+                    code:'xx1234564',
                     type:'xx123456',
-                    volume:'16',
                     specifications:'123*456',
-                    layer:'5',
-                    unitprice:'500.00',
-                    number:'16',
+                    volume:'16',
                     createTime:'2019/12/12 18:00:00',
                     updateTime:'2019/12/12 18:00:00'
                 }
             ],
+            isNew:false,            //是否新型号
             set_add_form:{      //编辑/添加 表单
-                type:'',
+                code:'',
+                type:'已有型号',
+                hasType:'',
+                newType:'',
                 volume:'',
                 specifications:'',
-                layer:'',
-                unitprice:'',
-                number:'16',
+                width:'',
+                height:'',
+                dtuCode:'',
+                dtuState:''
             },
             set_add_rule: {                 //编辑/添加 表单验证
+                code: [
+                    { required: true, message: '请输入货柜编号', trigger: 'blur' }
+                ],
                 type: [
                     { required: true, message: '请输入货柜型号', trigger: 'blur' }
                 ],
@@ -184,64 +218,41 @@ export default {
                 specifications: [
                     { required: true, message: '请输入货柜规格', trigger: 'blur' }
                 ],
-                layer: [
-                    { required: true, message: '请输入货柜层数', trigger: 'blur' }
+                dtuCode: [
+                    { required: true, message: 'DTU编号', trigger: 'blur' }
                 ],
-                unitprice: [
-                    { required: true, message: '请输入货柜单价', trigger: 'blur' }
+                dtuState: [
+                    { required: true, message: 'DTU状态', trigger: 'blur' }
                 ],
             },
-            delete_visible:false,       //删除弹窗
-            deletefail:false,              //删除失败显示内容
-            deletesuccess:false,            //删除成功显示内容
+            code_view_visible:false,         //二维码查看弹窗
         }
     },
     methods:{
         /** 查询 */
         search(){
-            if(this.day_one&&this.day_two){
-                if(this.day_one > this.day_two){
-                    this.$message.error('开始时间不能大于结束时间');
-                    return
-                }else{
-                    this.searchForm.date = this.day_one + ',' + this.day_two;
-                }
-            }else if(this.day_one){
-                this.searchForm.date = this.day_one;
-            }else{
-                this.searchForm.date = this.day_two;
-            }
             console.log(this.searchForm)
+        },
+        /** 表格 -- 二维码 */
+        setCode(index){
+            console.log(index)
+            this.code_view_visible = true;
+        },
+        /** 关闭二维码查看弹窗 */
+        closeCodeView(){
+            this.code_view_visible = false;
         },
         /** 表格 -- 编辑 */
         edit(index){
             this.set_add_visible = true;
         },
-        /** 表格 -- 删除 */
-        deletes(index){
-            this.delete_visible = true;
-            if(index==0){
-                this.deletefail = true;
+        /** 编辑 -- 货柜型号切换 */
+        changeType(){
+            if(this.set_add_form.type == '已有型号'){
+                this.isNew = false;
             }else{
-                this.deletesuccess = true;
+                this.isNew = true;
             }
-        },
-        /** 删除 -- 确定事件 */
-        setClick(isDelete){
-            if(isDelete){       //不能删除
-                this.delete_visible = false;
-                this.deletefail = false;
-            }else{
-                this.delete_visible = false;
-                this.deletesuccess = false;
-                this.$message.success('删除成功！');
-            }
-        },
-        /** 删除 -- 关闭/取消关闭弹窗 */
-        closeDialog(){
-            this.delete_visible = false;
-            this.deletefail = false;
-            this.deletesuccess = false;
         },
         /**页码操作 */
         handleSizeChange(val) {

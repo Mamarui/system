@@ -103,10 +103,10 @@ export const constantRoutes = [
         meta: { title: '设备分配', icon: 'dashboard' }
       },
       {
-        path: 'deviceType',
-        name: 'deviceType',
-        component: () => import('@/views/deviceManage/deviceType'),
-        meta: { title: '设备型号', icon: 'dashboard' }
+        path: 'deviceBind',
+        name: 'deviceBind',
+        component: () => import('@/views/deviceManage/deviceBind'),
+        meta: { title: '设备绑定', icon: 'dashboard' }
       }
     ]
   },

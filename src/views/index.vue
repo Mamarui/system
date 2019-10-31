@@ -5,16 +5,8 @@
 			<div class="top">
 				<div id="tab-one" class="tab_one"></div>
 				<p class="title_in title_one">设备概览</p>
-				<div class="icons icons-one">
-					<svg-icon :icon-class="list_one" @click="changeTab(0,'one')"/>
-					<svg-icon :icon-class="table_one" @click="changeTab(1,'one')"/>
-				</div>
 				<div id="tab-two" class="tab_two"></div>
 				<p class="title_in title_two">今日商家概览</p>
-				<div class="icons icons-two">
-					<svg-icon :icon-class="list_two" @click="changeTab(0,'two')"/>
-					<svg-icon :icon-class="table_two" @click="changeTab(1,'two')"/>
-				</div>
 			</div>
 			<div class="bottom">
 				<div id="table-chart" class="table_chart"></div>
@@ -69,20 +61,6 @@
 			.tab_one{
 				margin-right: 10%;
 			}
-			.icons{
-				position: absolute;
-				top: 10%;
-				.svg-icon{
-					width: 2em;
-					height: 2em;
-				}
-			}
-			.icons-one{
-				left: 33%;
-			}
-			.icons-two{
-				left: 83%;
-			}
 			.title_in{
 				position: absolute;
 				font-size: 18px;
@@ -135,12 +113,6 @@ import $ from 'jquery'
 export default {
 	data() {
 		return {
-				list_one:'list-show',	//左上图表list默认展示
-				table_one:'table-hide',	//左上图表table默认隐藏
-				list_two:'list-show',	//右上图表list默认展示
-				table_two:'table-hide',	//右上图表table默认隐藏
-				showIfOne:true,			//控制图标list的展示隐藏
-				showIfTwo:false,		//控制图标table的展示隐藏
 				changeState:'年',		//根据不同筛选条件展示折线图不同的title
 				year:true,				//折线图日期筛选条件根据不同筛选条件的展示隐藏 -- 年（默认展示）
 				month:false,			//折线图日期筛选条件根据不同筛选条件的展示隐藏 -- 月（默认不展示）
@@ -167,7 +139,7 @@ export default {
 		this.getYear();
 		this.initCharts1();
 		this.initCharts2();
-		this.initCharts5(this.defaultYear,'year');
+		this.initCharts3(this.defaultYear,'year');
 	},
 	methods:{
 		/**左上图1 */
@@ -181,9 +153,9 @@ export default {
 				},
 				legend: {
 					orient: 'horizontal',
-					left: '28%',
+					left: '32%',
 					bottom:'5%',
-					data:['设备型号1','设备型号2','设备型号3']
+					data:['异常设备','缺货设备','正常']
 				},
 				series: [
 					{
@@ -210,18 +182,9 @@ export default {
 							}
 						},
 						data:[
-							{
-								value:335, 
-								name:'设备型号1'
-							},
-							{
-								value:310, 
-								name:'设备型号2'
-							},
-							{
-								value:234, 
-								name:'设备型号3'
-							}
+							{value:335, name:'异常设备'},
+							{value:310, name:'缺货设备'},
+							{value:234, name:'正常'}
 						]
 					}
 				]
@@ -232,102 +195,6 @@ export default {
 			var	echarts = require('echarts');
 			var myChart2 = echarts.init(document.getElementById('tab-two'));
 			myChart2.setOption({
-				tooltip: {
-					trigger: 'item',
-					formatter: "{a} <br/>{b}: {c} ({d}%)"
-				},
-				legend: {
-					orient: 'horizontal',
-					left: '32%',
-					bottom:'5%',
-					data:['异常设备','缺货设备','正常']
-				},
-				series: [
-					{
-						name:'访问来源',
-						type:'pie',
-						radius: ['50%', '70%'],
-						avoidLabelOverlap: false,
-						label: {
-							normal: {
-								show: false,
-								position: 'center'
-							},
-							emphasis: {
-								show: true,
-								textStyle: {
-									fontSize: '30',
-									fontWeight: 'bold'
-								}
-							}
-						},
-						labelLine: {
-							normal: {
-								show: false
-							}
-						},
-						data:[
-							{value:335, name:'异常设备'},
-							{value:310, name:'缺货设备'},
-							{value:234, name:'正常'}
-						]
-					}
-				]
-			});
-		},
-		/**左上图2 */
-		initCharts3(){
-			var	echarts = require('echarts');
-			var myChart3 = echarts.init(document.getElementById('tab-one'));
-			myChart3.setOption({
-				tooltip: {
-					trigger: 'item',
-					formatter: "{a} <br/>{b}: {c} ({d}%)"
-				},
-				legend: {
-					orient: 'horizontal',
-					left: '32%',
-					bottom:'5%',
-					data:['异常设备','缺货设备','正常']
-				},
-				series: [
-					{
-						name:'累计上线设备数',
-						type:'pie',
-						radius: ['50%', '70%'],
-						avoidLabelOverlap: false,
-						label: {
-							normal: {
-								show: false,
-								position: 'center'
-							},
-							emphasis: {
-								show: true,
-								textStyle: {
-									fontSize: '30',
-									fontWeight: 'bold'
-								}
-							}
-						},
-						labelLine: {
-							normal: {
-								show: false
-							}
-						},
-						data:[
-							{value:335, name:'异常设备'},
-							{value:310, name:'缺货设备'},
-							{value:234, name:'正常'}
-						]
-					}
-				]
-			});
-		},
-		/**右上图2 */
-		initCharts4(){
-			var	echarts = require('echarts');
-			var myChart4 = echarts.init(document.getElementById('tab-two'));
-			myChart4.setOption({
 				tooltip: {
 					trigger: 'item',
 					formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -369,43 +236,6 @@ export default {
 					}
 				]
 			});
-		},
-		/**切换图标 控制top的图表展示 */
-		changeTab(num,type){
-			switch (num) {
-				case 0:		//只有list为hide时才有操作
-					if(type=='one'){	//左边 
-						if(this.list_one=='list-hide'){
-							this.list_one='list-show';
-							this.table_one='table-hide';
-							this.initCharts1();
-						}
-					}else{		//右边 
-						if(this.list_two=='list-hide'){
-							this.list_two='list-show';
-							this.table_two='table-hide';
-							this.initCharts2();
-						}
-					}
-					break;
-				case 1:	//只有table为hide时才有操作
-					if(type=='one'){	//左边 
-						if(this.table_one=='table-hide'){
-							this.table_one='table-show';
-							this.list_one='list-hide';
-							this.initCharts3();
-						}
-					}else{		//右边 
-						if(this.table_two=='table-hide'){
-							this.table_two='table-show';
-							this.list_two='list-hide';
-							this.initCharts4();
-						}
-					}
-					break;
-				default:
-					break;
-			}
 		},
 		/**筛选条件 年 */
 		getYears(type){
@@ -465,15 +295,15 @@ export default {
 			this.defaultDay.push(this.day_one);
 		},
 		/**下折线图 */
-		initCharts5(date,type){
+		initCharts3(date,type){
 			var	echarts = require('echarts');
-			var myChart5 = echarts.init(document.getElementById('table-chart'));
+			var myChart3 = echarts.init(document.getElementById('table-chart'));
 			if(type=='day'){
 				var datas = ['0:00','1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
 			}else{
 				var datas = date;
 			}
-			myChart5.setOption({
+			myChart3.setOption({
 				title: {
 					text: '平台' + this.changeState + '销售数据',
 					left: '45%',
@@ -548,7 +378,7 @@ export default {
 					this.types_month = '';
 					this.types_day = '';
 					this.getYear();
-					this.initCharts5(this.defaultYear,'year');
+					this.initCharts3(this.defaultYear,'year');
 					this.defaultMonth = [];
 					this.defaultDay = [];
 					break;
@@ -561,7 +391,7 @@ export default {
 					this.types_month = 'primary';
 					this.types_day = '';
 					this.getMonth();
-					this.initCharts5(this.defaultMonth,'month');
+					this.initCharts3(this.defaultMonth,'month');
 					this.defaultYear = [];
 					this.defaultDay = [];
 					break;
@@ -574,7 +404,7 @@ export default {
 					this.types_month = '';
 					this.types_day = 'primary';
 					this.getDay();
-					this.initCharts5(this.defaultDay,'day');
+					this.initCharts3(this.defaultDay,'day');
 					this.defaultYear = [];
 					this.defaultMonth = [];
 					break;
