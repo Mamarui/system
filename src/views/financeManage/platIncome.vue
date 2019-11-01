@@ -22,7 +22,7 @@
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
-                <el-table-column prop="orderuser" label="订单用户" align="center"></el-table-column>
+                <el-table-column prop="ordernum" label="订单号" align="center"></el-table-column>
                 <el-table-column prop="orderprice" label="订单金额(元)" align="center"></el-table-column>
                 <el-table-column prop="paytime" label="支付时间" align="center"></el-table-column>
                 <el-table-column prop="platincome" label="平台收入(元)" align="center"></el-table-column>
@@ -209,7 +209,7 @@ export default {
             },
             tableData:[
                 {
-                    orderuser:'天上人间',
+                    ordernum:'123132131321',
                     orderprice:'500，00.000',
                     paytime:'2018/10/2 12：00：00',
                     platincome:'23232323',
@@ -217,7 +217,7 @@ export default {
                     paidtime:'2015/11/10 15：00：15'
                 },
                 {
-                    orderuser:'天上人间',
+                    ordernum:'123132131321',
                     orderprice:'500，00.000',
                     paytime:'2018/10/2 12：00：00',
                     platincome:'23232323',
@@ -225,7 +225,7 @@ export default {
                     paidtime:'2015/11/10 15：00：15'
                 },
                 {
-                    orderuser:'天上人间',
+                    ordernum:'123132131321',
                     orderprice:'500，00.000',
                     paytime:'2018/10/2 12：00：00',
                     platincome:'23232323',
@@ -233,7 +233,7 @@ export default {
                     paidtime:'2015/11/10 15：00：15'
                 },
                 {
-                    orderuser:'天上人间',
+                    ordernum:'123132131321',
                     orderprice:'500，00.000',
                     paytime:'2018/10/2 12：00：00',
                     platincome:'23232323',

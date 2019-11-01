@@ -175,10 +175,22 @@ export const constantRoutes = [
         meta: { title: '商家收入', icon: 'dashboard' }
       },
       {
-        path: 'managerRakeback',
-        name: 'managerRakeback',
-        component: () => import('@/views/financeManage/managerRakeback'),
-        meta: { title: '管理员返佣', icon: 'dashboard' }
+        path: 'mediumRakeback',
+        name: 'mediumRakeback',
+        component: () => import('@/views/financeManage/mediumRakeback'),
+        meta: { title: '中介返佣', icon: 'dashboard' }
+      },
+      {
+        path: 'platCashout',
+        name: 'platCashout',
+        component: () => import('@/views/financeManage/platCashout'),
+        meta: { title: '商家提现', icon: 'dashboard' }
+      },
+      {
+        path: 'mediumManage',
+        name: 'mediumManage',
+        component: () => import('@/views/financeManage/mediumManage'),
+        meta: { title: '中介管理', icon: 'dashboard' }
       },
       {
         path: 'rakebackSet',

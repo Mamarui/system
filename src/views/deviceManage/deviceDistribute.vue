@@ -138,8 +138,8 @@
             </span>
         </el-dialog>
         <!-- 清除/删除 第一次提示弹窗 -->
-        <el-dialog :title="curTitle" :visible.sync="curVisible" width="30%" @close="curVisible = false" :close-on-click-modal='false'>
-            <span style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>{{curMention}}</span>
+        <el-dialog title="货柜配置清除" :visible.sync="curVisible" width="30%" @close="curVisible = false" :close-on-click-modal='false'>
+            <span style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>选中的设备如已分配给商家，清除后原商家将无法管理该货柜！</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="curVisible = false">取 消</el-button>
                 <el-button type="primary" @click="sureClick">确 定</el-button>
@@ -489,9 +489,7 @@ export default {
                     { required: true, message: '请选择分配商家', trigger: 'change' }
                 ],
             },
-            curTitle:'',
             curVisible:false,
-            curMention:'',
             buyPassword:'',             //交易密码
             curShowOne:false,           //第二次弹窗
             curShowTwo:false,           //第二次弹窗 -- 交易密码显示
@@ -556,8 +554,6 @@ export default {
         /**清除 第一次提示*/
         metion(index){
             this.curVisible = true;
-            this.curTitle = '货柜配置清除';
-            this.curMention = '选中的设备如已分配给商家，清除后原商家将无法管理该货柜！';
         },
         /**清除 第一次弹窗确认事件 */
         sureClick(){
@@ -573,7 +569,6 @@ export default {
             if(!this.buyPassword){      //第一次 确认事件
                 this.$message.error('请输入交易密码！')
             }else{                      //第二次 确认事件
-                console.log(this.curTitle)
                 console.log(this.buyPassword)
                 this.curShowTwo = false;
                 // this.curShowThree = true;

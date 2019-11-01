@@ -25,9 +25,9 @@
                 <el-table-column prop="business" label="商家名称" align="center"></el-table-column>
                 <el-table-column prop="businessaccount" label="商家返佣账号" align="center"></el-table-column>
                 <el-table-column prop="businessratio" label="商家返佣比例" align="center" width="150"></el-table-column>
-                <el-table-column prop="manager" label="管理者" align="center"></el-table-column>
-                <el-table-column prop="manageraccount" label="管理者返佣账号" align="center"></el-table-column>
-                <el-table-column prop="managerratio" label="管理者返佣比例" align="center" width="150"></el-table-column>
+                <el-table-column prop="manager" label="中介" align="center"></el-table-column>
+                <el-table-column prop="manageraccount" label="中介返佣账号" align="center"></el-table-column>
+                <el-table-column prop="managerratio" label="中介返佣比例" align="center" width="150"></el-table-column>
                 <el-table-column prop="createtime" label="创建时间" align="center"></el-table-column>
                 <el-table-column prop="updatetime" label="更新时间" align="center"></el-table-column>
                 <el-table-column label="操作" align="center" width="100">
@@ -43,7 +43,7 @@
         <!-- 表格 -- 配置 弹窗 -->
         <el-dialog title="配置返佣" :visible.sync="set_visible" width="35%" center :close-on-click-modal='false' @close="set_cancel">
             <div class="userInfo">
-                <p><span>商家名称 ：</span>天上人间</p>
+                <p><span>返佣商家 ：</span>天上人间</p>
                 <p><span>货柜数量 ：</span>30</p>
                 <p><span>货柜总容量 ：</span>150</p>
             </div>
@@ -52,24 +52,19 @@
                     <el-input v-model="set_form.businessratio" placeholder="请输入"></el-input>
                     <span>%</span>
                 </el-form-item>
-                <el-form-item label="商家账号名称">
-                    <el-input v-model="set_form.business" placeholder="请输入"></el-input>
+                <el-form-item label="返佣中介">
+                    <el-select v-model="set_form.manager" placeholder="请选择" style="width:80%">
+                        <el-option label="中介1" value="0"></el-option>
+                        <el-option label="中介2" value="1"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="商家返佣账号">
-                    <el-input v-model="set_form.businessaccount" placeholder="请输入银行账号"></el-input>
-                </el-form-item>
-                <el-form-item label="管理者">
-                    <el-input v-model="set_form.manager" placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="手机号">
-                    <el-input v-model="set_form.mobile" placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="管理者返佣比例">
+                <el-form-item label="中介返佣比例">
                     <el-input v-model="set_form.managerratio" placeholder="请输入"></el-input>
                     <span>%</span>
                 </el-form-item>
-                <el-form-item label="管理者返佣账号">
-                    <el-input v-model="set_form.manageraccount" placeholder="请输入银行账号"></el-input>
+                <el-form-item label="平台收益比例">
+                    <el-input v-model="set_form.benefitratio" disabled></el-input>
+                    <span>%</span>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -201,12 +196,9 @@ export default {
             set_visible:false,        //配置 弹窗
             set_form:{                  //配置 弹窗 表单
                 businessratio:'',
-                business:'',
-                businessaccount:'',
                 manager:'',
-                mobile:'',
                 managerratio:'',
-                manageraccount:''
+                benefitratio:''
             }, 
         }
     },
@@ -228,12 +220,9 @@ export default {
         set_cancel(){
             this.set_form = {                  //配置 弹窗 表单
                 businessratio:'',
-                business:'',
-                businessaccount:'',
                 manager:'',
-                mobile:'',
                 managerratio:'',
-                manageraccount:''
+                benefitratio:''
             };
             this.set_visible = false;
             console.log(this.set_form)

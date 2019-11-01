@@ -33,10 +33,10 @@
                 <el-table-column prop="orderprice" label="订单金额(元)" align="center"></el-table-column>
                 <el-table-column prop="paytime" label="支付时间" align="center" width="180"></el-table-column>
                 <el-table-column prop="orderbusiness" label="订单商家" align="center"></el-table-column>
-                <el-table-column prop="backmanager" label="返佣管理者" align="center"></el-table-column>
+                <el-table-column prop="backmanager" label="中介" align="center"></el-table-column>
                 <el-table-column prop="backratio" label="返佣比例" align="center"></el-table-column>
                 <el-table-column prop="backaccount" label="返佣账号" align="center"></el-table-column>
-                <el-table-column prop="backprice" label="返佣金额" align="center"></el-table-column>
+                <el-table-column prop="backprice" label="返佣金额(元)" align="center"></el-table-column>
                 <el-table-column prop="paystate" label="到账状态" align="center"></el-table-column>
                 <el-table-column prop="paidtime" label="结算时间" align="center" width="180"></el-table-column>
                 <el-table-column label="操作" align="center" width="100">
