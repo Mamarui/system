@@ -232,6 +232,7 @@
 </style>
 
 <script>
+import requestData  from '@/utils/request.js';
 export default {
     data() {
         return {
@@ -404,7 +405,20 @@ export default {
             buyPassword:'',             //交易密码
         }
     },
+    mounted(){
+        this.getCity();
+    },
     methods:{
+        /** 归属省市请求接口 */
+        getCity(pid){
+            requestData('/api/china',{
+                pid
+            },'get').then((res)=>{
+                console.log(res)
+            },(err)=>{
+                console.log(err)
+            })
+        },
         /** 筛选条件 搜索 */
         search(){
 
