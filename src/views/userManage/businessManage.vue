@@ -3,21 +3,19 @@
         <el-header class="header">
             <el-form :inline="true" :model="searchForm" class="form">
                 <el-form-item label="归属地域">
-                    <el-select v-model="searchForm.province">
+                    <el-select v-model="searchForm.province" @change="chooseProvince('search')">
                         <el-option label="省" value=""></el-option>
-                        <el-option label="甘肃" value="0"></el-option>
-                        <el-option label="四川" value="1"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in province" :key="index"></el-option>
                     </el-select>
                     <el-select v-model="searchForm.city">
                         <el-option label="市" value=""></el-option>
-                        <el-option label="兰州" value="0"></el-option>
-                        <el-option label="成都" value="1"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in city" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="创建时间">
-                    <el-date-picker v-model="day_one" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_one" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                     <span> - </span>
-                    <el-date-picker v-model="day_two" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_two" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                 </el-form-item>
                 <el-form-item>
                     <el-input v-model="searchForm.name" placeholder="请输入商家名称、联系人、联系电话"></el-input>
@@ -30,73 +28,57 @@
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
-                <el-table-column prop="businessname" label="商家名称" align="center"></el-table-column>
-                <el-table-column prop="name" label="联系人" align="center"></el-table-column>
-                <el-table-column prop="mobile" label="联系人电话" align="center"></el-table-column>
-                <el-table-column prop="type" label="货柜类型" align="center"></el-table-column>
-                <el-table-column prop="totalnum" label="货柜总数量" align="center"></el-table-column>
-                <el-table-column prop="region" label="归属地域" align="center"></el-table-column>
+                <el-table-column prop="name" label="商家名称" align="center"></el-table-column>
+                <el-table-column prop="contact" label="联系人" align="center"></el-table-column>
+                <el-table-column prop="phone" label="联系人电话" align="center"></el-table-column>
+                <el-table-column prop="container_type" label="货柜类型" align="center"></el-table-column>
+                <el-table-column prop="container_amount" label="货柜总数量" align="center"></el-table-column>
+                <el-table-column prop="area" label="归属地域" align="center"></el-table-column>
                 <el-table-column prop="address" label="详细地址" align="center"></el-table-column>
-                <el-table-column prop="totalpay" label="累计交易额(元)" align="center" width="180"></el-table-column>
-                <el-table-column prop="createTime" label="创建时间" align="center" width="180"></el-table-column>
+                <el-table-column prop="trade_amount" label="累计交易额(元)" align="center" width="180"></el-table-column>
+                <el-table-column prop="gmt_created" label="创建时间" align="center" width="180"></el-table-column>
                 <el-table-column label="操作" align="center" width="150">
                     <template slot-scope="scope">
-                        <el-button @click.native.prevent="view(scope.$index)" type="text" size="small">查看</el-button>
-                        <el-button @click.native.prevent="edit(scope.$index)" type="text" size="small">编辑</el-button>
-                        <el-button @click.native.prevent="deletes(scope.$index)" type="text" size="small">删除</el-button>
+                        <el-button @click.native.prevent="view(scope.row.id,'view')" type="text" size="small">查看</el-button>
+                        <el-button @click.native.prevent="edit(scope.row.id)" type="text" size="small">编辑</el-button>
+                        <el-button @click.native.prevent="deletes(scope.row.id)" type="text" size="small">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-main>
         <el-footer class="footer">
-            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.curpage" :page-sizes="searchForm.pagesizes" :page-size="searchForm.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="searchForm.total"></el-pagination>
+            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.page" :page-sizes="pagesizes" :page-size="searchForm.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
         </el-footer>
         <!-- 列表操作 -- 查看 弹窗 -->
         <el-dialog title="商家详情" :visible.sync="view_visible" width="35%" :close-on-click-modal='false' center @close="view_visible = false">
             <el-form :model="set_form" class="set_form" :rules="set_rule" ref="set_form" label-width="120px">
-                <el-form-item label="商家名称" prop="businessname">
-                    <el-input disabled v-model="set_form.businessname"></el-input>
-                </el-form-item>
-                <el-form-item label="联系人" prop="name">
+                <el-form-item label="商家名称" prop="name">
                     <el-input disabled v-model="set_form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="联系电话" prop="mobile">
-                    <el-input disabled v-model="set_form.mobile"></el-input>
+                <el-form-item label="联系人" prop="contact">
+                    <el-input disabled v-model="set_form.contact"></el-input>
+                </el-form-item>
+                <el-form-item label="联系电话" prop="phone">
+                    <el-input disabled v-model="set_form.phone" maxlength="11"></el-input>
                 </el-form-item>
                 <el-form-item label="地址" prop="address">
                     <el-select v-model="set_form.province" disabled>
-                        <el-option label="省" value=""></el-option>
-                        <el-option label="四川" value="0"></el-option>
-                        <el-option label="甘肃" value="1"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in province" :key="index"></el-option>
                     </el-select>
                     <el-select v-model="set_form.city" disabled>
-                        <el-option label="市" value=""></el-option>
-                        <el-option label="成都" value="0"></el-option>
-                        <el-option label="兰州" value="1"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in city" :key="index"></el-option>
                     </el-select>
-                    <el-input type="textarea" v-model="set_form.detailaddress" disabled></el-input>
+                    <el-input type="textarea" v-model="set_form.address" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="累计交易额">
-                    <el-input disabled v-model="set_form.totalpay"></el-input>
+                    <el-input disabled v-model="set_form.trade_amount"></el-input>
                 </el-form-item>
                 <el-form-item label="管理货柜" prop="manager">
-                    <span>（共x个货柜）</span>
+                    <span>（共{{set_form.container_total}}个货柜）</span>
                     <div class="bigbox">
-                        <section class="everybox">
-                            <div class="smallbox"><span>3</span></div>
-                            <span>型号1</span>
-                        </section>
-                        <section class="everybox">
-                            <div class="smallbox"><span>3</span></div>
-                            <span>型号1</span>
-                        </section>
-                        <section class="everybox">
-                            <div class="smallbox"><span>3</span></div>
-                            <span>型号1</span>
-                        </section>
-                        <section class="everybox">
-                            <div class="smallbox"><span>3</span></div>
-                            <span>型号1</span>
+                        <section class="everybox" v-for="(item,index) in set_form.container_list">
+                            <div class="smallbox"><span>{{item.total}}</span></div>
+                            <span>{{item.NAME}}</span>
                         </section>
                     </div>
                 </el-form-item>
@@ -108,27 +90,23 @@
         <!-- 列表操作 -- 编辑 弹窗（同添加） -->
         <el-dialog title="商家详情" :visible.sync="add_edit_visible" width="35%" :close-on-click-modal='false' center @close="closeDialog">
             <el-form :model="add_edit_form" class="add_edit_form" :rules="add_edit_rule" ref="add_edit_form" label-width="120px">
-                <el-form-item label="商家名称" prop="businessname">
-                    <el-input v-model="add_edit_form.businessname"></el-input>
-                </el-form-item>
-                <el-form-item label="联系人" prop="name">
+                <el-form-item label="商家名称" prop="name">
                     <el-input v-model="add_edit_form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="联系电话" prop="mobile">
-                    <el-input :disabled="isEdit" v-model="add_edit_form.mobile"></el-input>
+                <el-form-item label="联系人" prop="contact">
+                    <el-input v-model="add_edit_form.contact"></el-input>
+                </el-form-item>
+                <el-form-item label="联系电话" prop="phone">
+                    <el-input :disabled="isEdit" v-model="add_edit_form.phone" maxlength="11"></el-input>
                 </el-form-item>
                 <el-form-item label="地址" prop="address">
-                    <el-select v-model="add_edit_form.province">
-                        <el-option label="省" value=""></el-option>
-                        <el-option label="四川" value="0"></el-option>
-                        <el-option label="甘肃" value="1"></el-option>
+                    <el-select v-model="add_edit_form.province" @change="chooseProvince('add_edit')">
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in province" :key="index"></el-option>
                     </el-select>
                     <el-select v-model="add_edit_form.city">
-                        <el-option label="市" value=""></el-option>
-                        <el-option label="成都" value="0"></el-option>
-                        <el-option label="兰州" value="1"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in city" :key="index"></el-option>
                     </el-select>
-                    <el-input type="textarea" v-model="add_edit_form.detailaddress" placeholder="请输入详细地址"></el-input>
+                    <el-input type="textarea" v-model="add_edit_form.address" placeholder="请输入详细地址"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -232,20 +210,22 @@
 </style>
 
 <script>
-import requestData  from '@/utils/request.js';
+import requestData  from '@/utils/requestMethod';
+import regRxp from '@/utils/validate';
 export default {
     data() {
         return {
+            province:[],        //省
+            city:[],            //市
             searchForm:{
                 province:'',
                 city:'',
-                date:'',
+                gmt_created:'',
                 name:'',
-                curpage:1,
-                pagesize:10,
-                pagesizes:[10,20,50,100],
-                total:100
+                page:1,
+                limit:10,
             },
+            pagesizes:[10,20,50,100],
             day_one:'',
             day_two:'',
             pickerOptions:{
@@ -253,116 +233,28 @@ export default {
                     return time.getTime() > Date.now();
                 }
             },
-            tableData:[
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-                {
-                    businessname:'天上人间',
-                    name:'张三',
-                    mobile:'15200000000',
-                    type:'3',
-                    totalnum:'1369852',
-                    region:'四川-成都',
-                    address:'锦江区天府广场',
-                    totalpay:'100，000.00',
-                    createTime:'2019/12/10 11：00:00'
-                },
-            ],
+            total:0,        //列表总数
+            tableData:[],
             view_visible:false,          //查看商家详情
             set_form:{                  //查看商家详情 表单
-                businessname:'',
                 name:'',
-                mobile:'',
+                contact:'',
+                phone:'',
                 address:'',
                 province:'',
                 city:'',
-                detailaddress:'',
-                totalpay:'',
-                manager:[]
+                trade_amount:'',
+                container_list:[],
+                container_total:0
             },
             set_rule: {                 //查看商家详情 表单验证
-                businessname: [
+                name: [
                     { required: true, message: '请选择商家姓名', trigger: 'blur' }
                 ],
-                name: [
+                contact: [
                     { required: true, message: '请输入联系人姓名', trigger: 'blur' }
                 ],
-                mobile: [
+                phone: [
                     { required: true, message: '请输入联系电话', trigger: 'blur' }
                 ],
                 address: [
@@ -371,28 +263,28 @@ export default {
             },
             add_edit_visible:false,             //添加/编辑 弹窗
             add_edit_form:{                     //添加/编辑 表单
-                businessname:'',
                 name:'',
-                mobile:'',
+                contact:'',
+                phone:'',
                 address:'',
                 province:'',
                 city:'',
-                detailaddress:'',
             },
             add_edit_rule:{                 //添加/编辑 表单验证
-                businessname: [
+                name: [
                     { required: true, message: '请选择商家姓名', trigger: 'blur' }
                 ],
-                name: [
+                contact: [
                     { required: true, message: '请输入联系人姓名', trigger: 'blur' }
                 ],
-                mobile: [
-                    { required: true, message: '请输入联系电话', trigger: 'blur' }
+                phone: [
+                    { required: true, message: '请输入联系电话', trigger: 'blur' , validator: regRxp.validMoblie }
                 ],
                 address: [
                     { required: true, message: '请选择地址', trigger: 'change' }
                 ]
             },
+            id:'',                          //编辑时传商家id
             isEdit:false,                       //如果为添加 电话号码可输入 如果为编辑 电话号码不可编辑
             curVisible:false,            //删除 第一次 弹窗
             curMention:'',
@@ -406,48 +298,170 @@ export default {
         }
     },
     mounted(){
-        this.getCity();
+        this.getProvince(0);
+        this.getList();
     },
     methods:{
-        /** 归属省市请求接口 */
+        /** 归属省请求接口 */
+        getProvince(pid){
+            requestData('/api/china',{
+                pid:pid
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.province = res.data;
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
+        /**选择省--归属市请求接口*/
         getCity(pid){
             requestData('/api/china',{
-                pid
+                pid:pid
             },'get').then((res)=>{
-                console.log(res)
+                if(res.status==200){
+                    this.city = res.data;
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
+        chooseProvince(type){
+            if(type=='search'){
+                this.getCity(this.searchForm.province);
+            }else{
+                this.getCity(this.add_edit_form.province);
+            }
+        },
+        /** 获取商家管理列表 */
+        getList(){
+            requestData('/api/merchant/list',{
+                ...this.searchForm
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.total = res.count;
+                    this.tableData = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
             },(err)=>{
                 console.log(err)
             })
         },
         /** 筛选条件 搜索 */
         search(){
-
+            if(this.day_one&&this.day_two){
+                if(this.day_one > this.day_two){
+                    this.$message.error('开始时间小于结束时间！')
+                }else{
+                    this.searchForm.gmt_created = this.day_one + '~' + this.day_two;
+                }
+            }else if(this.day_one){
+                this.searchForm.gmt_created = this.day_one;
+            }else{
+                this.searchForm.gmt_created = this.day_two;
+            }
+            this.getList();
         },
         /** 添加商家 */
         addClick(){
-            this.add_edit_visible = true;
             this.isEdit = false;
+            this.add_edit_visible = true;
         },
         /** 表格操作 -- 查看 */
-        view(index){
-            console.log(index)
-            this.view_visible = true;
+        view(id,type){
+            requestData('/api/merchant/detail',{
+                id:id
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.getCity(this.set_form.province);
+                    if(type=='view'){
+                        this.set_form = res.data;
+                        this.view_visible = true;
+                    }else{
+                        this.add_edit_form.name = res.data.name;
+                        this.add_edit_form.contact = res.data.contact;
+                        this.add_edit_form.phone = res.data.phone;
+                        this.add_edit_form.address = res.data.address;
+                        this.add_edit_form.province = res.data.province;
+                        this.add_edit_form.city = res.data.city;
+                    }
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         /** 表格操作 -- 编辑 */
-        edit(index){
-            console.log(index)
+        edit(id){
+            this.id = id;
+            this.view(id,'edit');
             this.add_edit_visible = true;
             this.isEdit = true;
         },
-        /** 表格操作 -- 删除 */
-        deletes(index){
-            this.curVisible = true;
-            if(this.isCommon){
-                this.curMention = '删除该商家后，平台将无法管理该商家！';
+        /** 表格操作 -- 编辑（同添加）--关闭弹窗 */
+        closeDialog(){
+            this.add_edit_form = {                     //添加/编辑 表单
+                name:'',
+                contact:'',
+                phone:'',
+                address:'',
+                province:'',
+                city:'',
+                id:''
+            };
+            this.add_edit_visible = false;
+        },
+        /** 表格操作 -- 编辑（同添加） --确定事件 */
+        sureClick(){
+            var _url = '';
+            if(this.isEdit){
+                _url = '/api/merchant/update';
+                this.add_edit_form.id = this.id;
             }else{
-                this.curMention = '该商机的货柜数量不为0，不能删除！';
+                _url = '/api/merchant/add';
             }
-            console.log(index)
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    requestData(_url,{
+                        ...this.add_edit_form
+                    },'get').then((res)=>{
+                        if(res.status==200){
+                            this.$message.success(res.message);
+                            this.getList();
+                        }else{
+                            this.$message.error(res.message);
+                        }
+                    },(err)=>{
+                        console.log(err)
+                    })
+                    this.add_edit_visible = false;
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
+        /** 表格操作 -- 删除 */
+        deletes(id){
+            this.curVisible = true;
+            // if(this.isCommon){
+            //     this.curMention = '删除该商家后，平台将无法管理该商家！';
+            // }else{
+            //     this.curMention = '该商机的货柜数量不为0，不能删除！';
+            // }
+            requestData('/api/merchant/delete',{
+                id:id
+            },'get').then((res)=>{
+                if(res.status==200){
+                    console.log(res)
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         /** 表格操作 -- 删除 第一次弹窗 确认事件 */
         curClick(){
@@ -484,30 +498,14 @@ export default {
             this.curShowFive = false;
             this.buyPassword = '';
         },
-        /** 表格操作 -- 编辑（同添加）--关闭弹窗 */
-        closeDialog(){
-            console.log(this.add_edit_form)
-            this.add_edit_form = {                     //添加/编辑 表单
-                businessname:'',
-                name:'',
-                mobile:'',
-                address:'',
-                province:'',
-                city:'',
-                detailaddress:'',
-            };
-            this.add_edit_visible = false;
-        },
-        /** 表格操作 -- 编辑（同添加） --确定事件 */
-        sureClick(){
-            console.log(this.add_edit_form)
-        },
         /**页码操作 */
-        handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+        handleSizeChange(val) {     //改变pagesize时
+            this.searchForm.limit = val;
+            this.getList();
         },
-        handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+        handleCurrentChange(val) {      //改变curpage时
+            this.searchForm.page = val;
+            this.getList();
         },
     }
 }

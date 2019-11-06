@@ -2,11 +2,15 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import Qs from 'qs'
 
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   baseURL:'',
+  transformRequest:[function(data,headers){     //content-type: text/html; charset=utf-8，防止后台接收不到数据  -- https://www.cnblogs.com/yiyi17/p/9409249.html
+    return Qs.stringify(data)
+  }],
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
@@ -14,8 +18,8 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
+    // console.log(config)
     // do something before request is sent
-
     if (store.getters.token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
@@ -45,9 +49,8 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 200) {
+    if (res.status !== 200) {
       Message({
         message: res.message || 'Error',
         type: 'error',

@@ -54,6 +54,7 @@ module.exports = {
       '/api':{
         target:'http://47.105.134.186:8080/scm/',
         changeOrigin:true,//是否跨域
+        toProxy:true,   //将绝对URL传递给path（用于代理）
         pathRewrite:{
           '^/api':'/api'
         }
