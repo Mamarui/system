@@ -8,57 +8,34 @@
 				<h3 class="title">登 录</h3>
 			</div>
 
-			<el-form-item prop="mobile">
+			<el-form-item prop="phone">
 				<span class="svg-container">
-				<svg-icon icon-class="mobile" />
+					<svg-icon icon-class="mobile" />
 				</span>
-				<el-input
-				ref="mobile"
-				v-model="loginForm.mobile"
-				placeholder="请输入手机号"
-				name="mobile"
-				type="text"
-				tabindex="1"
-				maxlength="11"
-				/>
+				<el-input ref="phone" v-model="loginForm.phone" placeholder="请输入手机号" name="phone" type="text" tabindex="1" maxlength="11"/>
 			</el-form-item>
 
 			<el-form-item prop="password">
 				<span class="svg-container">
 					<svg-icon icon-class="password" />
 				</span>
-				<el-input
-					:key="passwordType"
-					ref="password"
-					v-model="loginForm.password"
-					:type="passwordType"
-					placeholder="请输入密码"
-					name="password"
-					tabindex="2"
-					@keyup.enter.native="handleLogin"
-				/>
+				<el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType" placeholder="请输入密码" name="password" tabindex="2" maxlength="16"/>
 				<span class="show-pwd" @click="showPwd">
 					<svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
 				</span>
 			</el-form-item>
 
-			<el-form-item prop="piccode">
+			<el-form-item prop="code">
 				<span class="svg-container">
 					<svg-icon icon-class="piccode" />
 				</span>
-				<el-input
-					ref="piccode"
-					v-model="loginForm.piccode"
-					placeholder="请输入图片验证码"
-					name="piccode"
-					tabindex="2"
-					@keyup.enter.native="handleLogin"
-					class="codeInput"
-				/>
-				<div class="codeBox"></div>
+				<el-input ref="code" v-model="loginForm.code" placeholder="请输入图片验证码(区分大小写)" name="code" tabindex="2" class="codeInput" maxlength="4"/>
+				<div class="codeBox" @click="getPiccode">
+					<img :src="codeUrl">
+				</div>
 			</el-form-item>
 
-			<el-button :loading="loading" type="primary" style="width:75%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+			<el-button :loading="loading" type="primary" style="width:75%;margin-bottom:30px;" @click.native.prevent="handleLogin"> 登 录 </el-button>
 
 		</el-form>
 	  </div>
@@ -66,37 +43,44 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import requestData  from '@/utils/requestMethod';
 
 export default {
   name: 'Login',
   data() {
     const validateMobile = (rule, value, callback) => {
-		if (!/^1[3456789]\d{9}$/.test(value)) {
-            callback(new Error('Please enter the correct mobile'))
-        };
+		var reg=/^[1][3,4,5,7,8][0-9]{9}$/;
+		if (!reg.test(value)) {
+			callback(new Error('电话号码输入格式有误！'))
+		} else {		//正确就往下走！！！！！！瞎省略个锤子
+			callback()
+		}
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
+        callback(new Error('密码格式错误'))
+      } else {		//正确就往下走！！！！！！
         callback()
       }
     }
     return {
       loginForm: {
-        mobile: '',
-        password: '',
-		piccode:''
+        phone: '18280126773',
+        password: '123456',
+		code:''
       },
       loginRules: {
-        mobile: [{ required: true, trigger: 'blur', validator: validateMobile }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        phone: [{ required: true, trigger: 'blur', validator: validateMobile }],
+		password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+	  redirect: undefined,
+	  codeUrl:'http://47.105.134.186:8080/scm/api/captcha/getcode',			//获取图片验证码地址（上正式要修改）
     }
+  },
+  mounted(){
+	  this.getPiccode();
   },
   watch: {
     $route: {
@@ -116,17 +100,37 @@ export default {
 		this.$nextTick(() => {
 			this.$refs.password.focus()
 		})
-    },
+	},
+	getPiccode(){
+		this.codeUrl = 'http://47.105.134.186:8080/scm/api/captcha/getcode?d='+new Date().getTime();
+	},
     handleLogin() {
 		this.$refs.loginForm.validate(valid => {
 			if (valid) {
 			this.loading = true
-				this.$store.dispatch('user/login', this.loginForm).then(() => {
-					this.$router.push({ path: this.redirect || '/' })
-					this.loading = false
-				}).catch(() => {
-					this.loading = false
-				})
+			requestData('/api/login/admin',{
+                ...this.loginForm
+            },'get').then((res)=>{
+				if(res.status==200){
+					this.$message.success('登录成功！')
+					this.setSessitonStorage(res.data)
+					this.$router.push({ path: '/' })
+					this.loading = false;
+				}else{
+					this.$message.error(res.message)
+					this.loading = false;
+				}
+            },(err)=>{
+                console.log(err)
+            }).catch(() => {
+				this.loading = false;
+			})
+				// this.$store.dispatch('user/login', this.loginForm).then(() => {
+				// 	this.$router.push({ path: this.redirect || '/' })
+				// 	this.loading = false
+				// }).catch(() => {
+				// 	this.loading = false
+				// })
 			} else {
 				console.log('error submit!!')
 				return false
@@ -164,7 +168,7 @@ $cursor: #fff;
 		-webkit-appearance: none;
 		border-radius: 0px;
 		padding: 12px 5px 12px 15px;
-		color: $light_gray;
+		color: $bg;
 		height: 47px;
 		caret-color: $cursor;
 
@@ -177,9 +181,8 @@ $cursor: #fff;
 
 	.el-form-item {
 		border: 1px solid rgba(255, 255, 255, 0.1);
-		background: rgba(0, 0, 0, 0.1);
+		background: rgba(0, 0, 0, 0.05);
 		border-radius: 5px;
-		color: #454545;
 		width: 75%;
 	}
 }
@@ -204,13 +207,13 @@ $cursor: #fff;
 		align-items: center;
 
 		.login-banner{
-			width: 700px;
+			width: 680px;
 			height: 500px;
 			background-image: url('../../assets/imgs/banner.jpg');
 			background-size: 100% 100%;
 			position: relative;
 			margin: 0 auto;
-			opacity: 0.9;
+			opacity: 0.7;
 			border-top-left-radius: 10px;
 			border-bottom-left-radius: 10px;
 		}
@@ -278,10 +281,15 @@ $cursor: #fff;
 		}
 
 		.codeBox{
-			width: 30%;
-			height: 51px;
+			width: 26%;
+			height: 35px;
 			background-color: yellow;
 			float: right;
+			margin-top: 8px;
+			img{
+				width: 100%;
+				height: 100%
+			}
 		}
 	}
 }

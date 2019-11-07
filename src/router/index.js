@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import Login from '../views/login/index.vue';
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -30,38 +31,47 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
-
+export const constantRouterMap = [
+  { path: '/login', component: Login },
   {
     path: '/',
-    name: '首页',
     component: Layout,
-    redirect: '/index',
-    meta: { title: '首页', icon: 'dashboard' },
-    children: [
-      {
-        path: 'index',
-        name: 'index',
-        component: () => import('@/views/index'),
-        meta: { title: '首页', icon: 'dashboard' }
-      }
-    ]
+    redirect: '/dashboard',
+    name: '首页',
+    children: [{ path: 'dashboard', component: () => import('@/views/index') }]
   },
+]
+export const asyncRouterMap = [
+
+  // {
+  //   path: '/',
+  //   name: '首页',
+  //   component: Layout,
+  //   redirect: '/index',
+  //   meta: { title: '首页', icon: 'dashboard' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       name: 'index',
+  //       component: () => import('@/views/index'),
+  //       meta: { title: '首页', icon: 'dashboard' }
+  //     }
+  //   ]
+  // },
   
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
     hidden: true,
     component: Layout,
     redirect: '/login',
     meta: { title: '登录', icon: 'dashboard' },
     children: [
-      {
-        path: 'login',
-        name: 'login',
-        component: () => import('@/views/login/index'),
-        meta: { title: '登录', icon: 'dashboard' }
-      },
+      // {
+      //   path: 'login',
+      //   name: 'login',
+      //   component: () => import('@/views/login/index'),
+      //   meta: { title: '登录', icon: 'dashboard' }
+      // },
       {
         path: 'forgetPassword',
         name: 'forgetPassword',
@@ -214,7 +224,7 @@ export const constantRoutes = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRouterMap
 })
 
 const router = createRouter()

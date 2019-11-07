@@ -41,7 +41,7 @@
                     <template slot-scope="scope">
                         <el-button @click.native.prevent="view(scope.row.id,'view')" type="text" size="small">查看</el-button>
                         <el-button @click.native.prevent="edit(scope.row.id)" type="text" size="small">编辑</el-button>
-                        <el-button @click.native.prevent="deletes(scope.row.id)" type="text" size="small">删除</el-button>
+                        <el-button @click.native.prevent="deletes(scope.row.id,scope.$index)" type="text" size="small">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -278,7 +278,8 @@ export default {
                     { required: true, message: '请输入联系人姓名', trigger: 'blur' }
                 ],
                 phone: [
-                    { required: true, message: '请输入联系电话', trigger: 'blur' , validator: regRxp.validMoblie }
+                    { required: true, message: '请输入联系电话', trigger: 'blur' },
+                    { validator: regRxp.validMoblie , trigger: 'blur' }
                 ],
                 address: [
                     { required: true, message: '请选择地址', trigger: 'change' }
@@ -288,7 +289,7 @@ export default {
             isEdit:false,                       //如果为添加 电话号码可输入 如果为编辑 电话号码不可编辑
             curVisible:false,            //删除 第一次 弹窗
             curMention:'',
-            isCommon:true,             //是否为正常删除
+            isCommon:true,             //是否为正常删除(可以输交易密码)
             curShowOne:false,           //删除 第二次 弹窗
             curShowTwo:false,           //第二次弹窗 -- 交易密码显示
             curShowThree:false,         //第二次确认事件 -- 填写成功显示内容
@@ -444,38 +445,32 @@ export default {
             });
         },
         /** 表格操作 -- 删除 */
-        deletes(id){
+        deletes(id,index){
+            if(this.tableData[index].container_amount==0){      //数量为0 不可删除
+                this.isCommon = false;   
+            }else{
+                this.isCommon = true;   
+            }
             this.curVisible = true;
-            // if(this.isCommon){
-            //     this.curMention = '删除该商家后，平台将无法管理该商家！';
-            // }else{
-            //     this.curMention = '该商机的货柜数量不为0，不能删除！';
-            // }
-            requestData('/api/merchant/delete',{
-                id:id
-            },'get').then((res)=>{
-                if(res.status==200){
-                    console.log(res)
-                }else{
-                    this.$message.error(res.message);
-                }
-            },(err)=>{
-                console.log(err)
-            })
+            if(this.isCommon){
+                this.curMention = '删除该商家后，平台将无法管理该商家！';
+            }else{
+                this.curMention = '该商机的货柜数量不为0，不能删除！';
+            }
         },
         /** 表格操作 -- 删除 第一次弹窗 确认事件 */
         curClick(){
             this.curVisible = false;
-            if(this.isCommon){
+            if(this.isCommon){      //如果可以正常删除
                 this.curShowOne = true;
                 this.curShowTwo = true;
             }
         },
-        /**清除/删除 取消事件 */
+        /**删除 取消事件 */
         curcancelClick(){
             this.closeCurDialog();
         },
-        /**清除/删除 点击事件 */
+        /**删除 点击事件 */
         curSureClick(){
             if(!this.buyPassword){      //第一次 确认事件
                 this.$message.error('请输入交易密码！')
@@ -487,6 +482,20 @@ export default {
                 // this.curShowFour = true;
                 this.curShowFive = true;
             }
+        },
+        /** 删除成功 请求函数 */
+        deletesSure(){
+            requestData('/api/merchant/delete',{
+                id:this.id
+            },'get').then((res)=>{
+                if(res.status==200){
+                    console.log(res)
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         /** 关闭弹窗事件 */
         closeCurDialog(){

@@ -6,7 +6,7 @@
 				<div id="tab-one" class="tab_one"></div>
 				<p class="title_in title_one">设备概览</p>
 				<div id="tab-two" class="tab_two"></div>
-				<p class="title_in title_two">今日商家概览</p>
+				<p class="title_in title_two">商家概览</p>
 			</div>
 			<div class="bottom">
 				<div id="table-chart" class="table_chart"></div>
@@ -67,10 +67,10 @@
 				top: 0;
 			}
 			.title_one{
-				left: 18%;
+				left: 20%;
 			}
 			.title_two{
-				left: 67%;
+				left: 75%;
 			}
 		}
 		.bottom{
@@ -109,6 +109,7 @@
 </style>
 
 <script>
+import requestData  from '@/utils/requestMethod';
 import $ from 'jquery'
 export default {
 	data() {
@@ -142,100 +143,102 @@ export default {
 		this.initCharts3(this.defaultYear,'year');
 	},
 	methods:{
-		/**左上图1 */
+		/**设备概览 -- 左上 */
 		initCharts1(){
-			var	echarts = require('echarts');
-			var myChart1 = echarts.init(document.getElementById('tab-one'));
-			myChart1.setOption({
-				tooltip: {
-					trigger: 'item',
-					formatter: "{a} <br/>{b}: {c} ({d}%)"
-				},
-				legend: {
-					orient: 'horizontal',
-					left: '32%',
-					bottom:'5%',
-					data:['异常设备','缺货设备','正常']
-				},
-				series: [
-					{
-						name:'累计上线设备数',
-						type:'pie',
-						radius: ['50%', '70%'],
-						avoidLabelOverlap: false,
-						label: {
-							normal: {
-								show: false,
-								position: 'center'
-							},
-							emphasis: {
-								show: true,
-								textStyle: {
-									fontSize: '30',
-									fontWeight: 'bold'
-								}
-							}
+			var that = this;
+			requestData('/api/index/equip',{},'get').then((res)=>{
+                if(res.status==200){
+                    var	echarts = require('echarts');
+					var myChart1 = echarts.init(document.getElementById('tab-one'));
+					myChart1.setOption({
+						tooltip: {
+							trigger: 'item',
+							formatter: "{a} <br/>{b}: {c} ({d}%)"
 						},
-						labelLine: {
-							normal: {
-								show: false
-							}
+						legend: {
+							orient: 'horizontal',
+							left: '40%',
+							bottom:'5%',
+							data: res.data.legend
 						},
-						data:[
-							{value:335, name:'异常设备'},
-							{value:310, name:'缺货设备'},
-							{value:234, name:'正常'}
+						series: [
+							{
+								name:'累计上线设备数',
+								type:'pie',
+								radius: ['50%', '70%'],
+								avoidLabelOverlap: false,
+								label: {
+									normal: {
+										show: true,
+										position: 'center',
+										formatter:'{a}',
+										textStyle:{
+											fontSize:16
+										}
+									}
+								},
+								labelLine: {
+									normal: {
+										show: false
+									}
+								},
+								data:res.data.data
+							}
 						]
-					}
-				]
-			});
+					});
+				}
+			},(err)=>{
+				console.log(err)
+			})			
 		},
-		/**右上图1 */
+		/**商家概览 -- 右上 */
 		initCharts2(){
-			var	echarts = require('echarts');
-			var myChart2 = echarts.init(document.getElementById('tab-two'));
-			myChart2.setOption({
-				tooltip: {
-					trigger: 'item',
-					formatter: "{a} <br/>{b}: {c} ({d}%)"
-				},
-				legend: {
-					orient: 'horizontal',
-					left: '35%',
-					bottom:'5%',
-					data:['未交易商家','有交易商家']
-				},
-				series: [
-					{
-						name:'累计上线设备数',
-						type:'pie',
-						radius: ['50%', '70%'],
-						avoidLabelOverlap: false,
-						label: {
-							normal: {
-								show: false,
-								position: 'center'
-							},
-							emphasis: {
-								show: true,
-								textStyle: {
-									fontSize: '30',
-									fontWeight: 'bold'
-								}
-							}
+			var that = this;
+			requestData('/api/index/merchant',{},'get').then((res)=>{
+                if(res.status==200){
+                    var	echarts = require('echarts');
+					var myChart2 = echarts.init(document.getElementById('tab-two'));
+					myChart2.setOption({
+						tooltip: {
+							trigger: 'item',
+							formatter: "{a} <br/>{b}: {c} ({d}%)"
 						},
-						labelLine: {
-							normal: {
-								show: false
-							}
+						legend: {
+							orient: 'horizontal',
+							left: '35%',
+							bottom:'5%',
+							data:res.data.legend
 						},
-						data:[
-							{value:335, name:'未交易商家'},
-							{value:310, name:'有交易商家'}
+						series: [
+							{
+								name:'累计商家数',
+								type:'pie',
+								radius: ['50%', '70%'],
+								avoidLabelOverlap: false,
+								label: {
+									normal: {
+										show: true,
+										position: 'center',
+										formatter:'{a}',
+										textStyle:{
+											fontSize:16
+										}
+									}
+								},
+								labelLine: {
+									normal: {
+										show: false
+									}
+								},
+								data:res.data.data
+							}
 						]
-					}
-				]
-			});
+					});
+				}
+			},(err)=>{
+				console.log(err)
+			})	
+			
 		},
 		/**筛选条件 年 */
 		getYears(type){
