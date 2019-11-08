@@ -22,3 +22,7 @@ export function logout() {
     method: 'post'
   })
 }
+
+// export function getAuthority(admin_id){
+//   return request(ajaxUrl.common.authority,{admin_id:admin_id})
+// }

@@ -12,7 +12,7 @@
 				<span class="svg-container">
 					<svg-icon icon-class="mobile" />
 				</span>
-				<el-input ref="phone" v-model="loginForm.phone" placeholder="请输入手机号" name="phone" type="text" tabindex="1" maxlength="11"/>
+				<el-input ref="phone" v-model="loginForm.phone" placeholder="请输入手机号" name="phone" type="text" tabindex="1" maxlength="11" @blur="getPiccode"/>
 			</el-form-item>
 
 			<el-form-item prop="password">
@@ -31,7 +31,8 @@
 				</span>
 				<el-input ref="code" v-model="loginForm.code" placeholder="请输入图片验证码(区分大小写)" name="code" tabindex="2" class="codeInput" maxlength="4"/>
 				<div class="codeBox" @click="getPiccode">
-					<img :src="codeUrl">
+					<img :src="codeUrl" v-if="codeUrl">
+					<svg-icon icon-class="default" v-else style="width:2em;height:1.5rem;margin-left:4.5em;"/>
 				</div>
 			</el-form-item>
 
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import requestData  from '@/utils/requestMethod';
+import $ from 'jquery'
 
 export default {
   name: 'Login',
@@ -76,7 +77,8 @@ export default {
       loading: false,
       passwordType: 'password',
 	  redirect: undefined,
-	  codeUrl:'http://47.105.134.186:8080/scm/api/captcha/getcode',			//获取图片验证码地址（上正式要修改）
+	  codeUrl:'http://47.105.134.186:8080/scm/api/captcha/getcode?phone=18280126773',		//获取图片验证码地址（上正式要修改）
+	  defaultUrl:'@/assets/imgs/default.png'
     }
   },
   mounted(){
@@ -102,38 +104,34 @@ export default {
 		})
 	},
 	getPiccode(){
-		this.codeUrl = 'http://47.105.134.186:8080/scm/api/captcha/getcode?d='+new Date().getTime();
+		this.codeUrl = 'http://47.105.134.186:8080/scm/api/captcha/getcode?phone='+this.loginForm.phone+'&d='+new Date().getTime();
+		// this.codeUrl = 'http://localhost:8081/api/captcha/getcode?d='+new Date().getTime()+'&phone='+this.loginForm.phone;
 	},
     handleLogin() {
+		var that = this;
 		this.$refs.loginForm.validate(valid => {
 			if (valid) {
-			this.loading = true
-			requestData('/api/login/admin',{
-                ...this.loginForm
-            },'get').then((res)=>{
-				if(res.status==200){
-					this.$message.success('登录成功！')
-					this.setSessitonStorage(res.data)
-					this.$router.push({ path: '/' })
-					this.loading = false;
-				}else{
-					this.$message.error(res.message)
-					this.loading = false;
-				}
-            },(err)=>{
-                console.log(err)
-            }).catch(() => {
-				this.loading = false;
-			})
-				// this.$store.dispatch('user/login', this.loginForm).then(() => {
-				// 	this.$router.push({ path: this.redirect || '/' })
-				// 	this.loading = false
-				// }).catch(() => {
-				// 	this.loading = false
-				// })
-			} else {
-				console.log('error submit!!')
-				return false
+				this.loading = true
+				$.ajax({		//登录时没有token 所以不用封装的request方法
+					type: 'get',
+					url: '/api/login/admin',
+					data: {...this.loginForm},
+					dataType: "json",
+					success: function(res){
+						if(res.status==200){
+							that.$message.success('登录成功！')
+							sessionStorage.setItem('token',res.result.token)
+							that.$router.push({ path: '/' })
+							that.loading = false;
+						}else{
+							that.$message.error(res.message)
+							that.loading = false;
+						}
+					},
+					error:function(err){
+						console.log(err)
+					}
+				});
 			}
 		})
     }
@@ -283,7 +281,6 @@ $cursor: #fff;
 		.codeBox{
 			width: 26%;
 			height: 35px;
-			background-color: yellow;
 			float: right;
 			margin-top: 8px;
 			img{

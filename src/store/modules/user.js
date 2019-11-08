@@ -1,11 +1,12 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { resetRouter ,constantRouterMap} from '@/router'
 
 const state = {
   token: getToken(),
   name: '',
-  avatar: ''
+  avatar: '',
+	routers:[],
 }
 
 const mutations = {
@@ -17,7 +18,16 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
-  }
+  },
+	SET_ADMIN_DETAIL: (state, admin_detail) => {  //将登陆者详细信息存入store
+		state.admin_detail = admin_detail
+	},
+	SET_IS_GET_AUTHORITY:(state,bool) => {  //判断用户是否获取过权限
+		state.is_get_authority = bool
+	},
+	SET_ROUTERS:(state,routers)=>{
+    state.routers = constantRouterMap.concat(routers)
+	}
 }
 
 const actions = {
