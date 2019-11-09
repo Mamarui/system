@@ -121,6 +121,9 @@ export default {
 						if(res.status==200){
 							that.$message.success('登录成功！')
 							sessionStorage.setItem('token',res.result.token)
+							sessionStorage.setItem('phone',res.result.phone)
+							sessionStorage.setItem('name',res.result.name)
+							sessionStorage.setItem('userid',res.result.userid)
 							that.$router.push({ path: '/' })
 							that.loading = false;
 						}else{

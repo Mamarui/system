@@ -475,12 +475,19 @@ export default {
             if(!this.buyPassword){      //第一次 确认事件
                 this.$message.error('请输入交易密码！')
             }else{                      //第二次 确认事件
-                console.log(this.curTitle)
-                console.log(this.buyPassword)
-                this.curShowTwo = false;
-                // this.curShowThree = true;
-                // this.curShowFour = true;
-                this.curShowFive = true;
+                requestData('/api/auth/trade_pwd',{
+                    trade_pwd:this.buyPassword
+                },'get').then((res)=>{
+                    console.log(res)
+                },(err)=>{
+                    console.log(err)
+                })
+                // console.log(this.curTitle)
+                // console.log(this.buyPassword)
+                // this.curShowTwo = false;
+                // // this.curShowThree = true;
+                // // this.curShowFour = true;
+                // this.curShowFive = true;
             }
         },
         /** 删除成功 请求函数 */

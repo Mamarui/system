@@ -48,7 +48,7 @@ export default {
   },
   data() {
     return {
-      telemoblie:'15200000000'
+      telemoblie:sessionStorage.getItem('phone')
     }
   },
   methods: {
@@ -57,6 +57,7 @@ export default {
     },
     logout() {
       this.$router.push(`/login`)
+      sessionStorage.clear();
     }
   }
 }
