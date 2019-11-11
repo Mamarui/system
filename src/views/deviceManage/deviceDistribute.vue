@@ -3,30 +3,27 @@
         <div class="header">
             <el-form :inline="true" :model="searchForm" class="form">
                 <el-form-item label="货柜型号">
-                    <el-select v-model="searchForm.type">
-                        <el-option label="货柜型号一" value="0"></el-option>
-                        <el-option label="货柜型号二" value="1"></el-option>
+                    <el-select v-model="searchForm.model_id">
+                        <el-option :label="item.model" :value="item.model_id" v-for="(item,index) in type" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="货柜状态">
-                    <el-select v-model="searchForm.state">
-                        <el-option label="货柜状态一" value="0"></el-option>
-                        <el-option label="货柜状态二" value="1"></el-option>
+                    <el-select v-model="searchForm.dto_status">
+                        <el-option :label="item" :value="index" v-for="(item,index) in state" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="商家绑定">
-                    <el-select v-model="searchForm.business">
-                        <el-option label="商家一" value="0"></el-option>
-                        <el-option label="商家二" value="1"></el-option>
+                    <el-select v-model="searchForm.bind_status">
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in business" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="分配时间">
-                    <el-date-picker v-model="day_one" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_one" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                     <span> - </span>
-                    <el-date-picker v-model="day_two" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_two" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="searchForm.name" placeholder="请输入货柜名/商家名称"></el-input>
+                    <el-input v-model="searchForm.ckeys" placeholder="请输入货柜名/商家名称"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
@@ -37,32 +34,31 @@
             <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" border>
                 <el-table-column type="selection" width="40" align="center"></el-table-column>
                 <el-table-column prop="name" label="货柜名" align="center"></el-table-column>
-                <el-table-column prop="type" label="货柜型号" align="center"></el-table-column>
-                <el-table-column prop="bodycode" label="货柜编号" align="center"></el-table-column>
-                <el-table-column prop="dtu" label="DTU编号" align="center"></el-table-column>
-                <el-table-column prop="code" label="货柜编号" align="center"></el-table-column>
-                <el-table-column prop="state" label="货柜状态" align="center"></el-table-column>
+                <el-table-column prop="model" label="货柜型号" align="center"></el-table-column>
+                <el-table-column prop="surface_no" label="货柜编号" align="center"></el-table-column>
+                <el-table-column prop="dtu_no" label="DTU编号" align="center"></el-table-column>
+                <el-table-column prop="dto_status" label="货柜状态" align="center"></el-table-column>
                 <el-table-column prop="volume" label="容量" align="center"></el-table-column>
-                <el-table-column prop="salenum" label="在售商品数" align="center"></el-table-column>
-                <el-table-column prop="business" label="分配商家" align="center"></el-table-column>
-                <el-table-column prop="businessstate" label="商家绑定状态" align="center"></el-table-column>
-                <el-table-column prop="createTime" label="分配时间" align="center" width="180"></el-table-column>
+                <el-table-column prop="on_sale" label="在售商品数" align="center"></el-table-column>
+                <el-table-column prop="merchant_name" label="分配商家" align="center"></el-table-column>
+                <el-table-column prop="bind_status" label="商家绑定状态" align="center"></el-table-column>
+                <el-table-column prop="gmt_assign" label="分配时间" align="center" width="180"></el-table-column>
                 <el-table-column label="操作" align="center" width="150">
                     <template slot-scope="scope">
-                        <el-button @click.native.prevent="view(scope.$index)" type="text" size="small">查看</el-button>
-                        <el-button @click.native.prevent="settings('line',scope.$index)" type="text" size="small">分配</el-button>
-                        <el-button @click.native.prevent="metion(scope.$index)" type="text" size="small">清除</el-button>
+                        <el-button @click.native.prevent="view(scope.row.id,scope.$index)" type="text" size="small">查看</el-button>
+                        <el-button @click.native.prevent="settings('line',scope.row.id,scope.$index)" type="text" size="small">分配</el-button>
+                        <el-button @click.native.prevent="metion(scope.row.id,scope.$index)" type="text" size="small">清除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-main>
         <el-footer class="footer">
-            <div class="buttons">
+            <!-- <div class="buttons">
                 <el-button @click.native.prevent="settings('select')" plain size="small">分配</el-button>
                 <el-button @click.native.prevent="metion" plain size="small">清除</el-button>
-            </div>
+            </div> -->
             <div class="block">
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.curpage" :page-sizes="searchForm.pagesizes" :page-size="searchForm.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="searchForm.total"></el-pagination>
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.page" :page-sizes="pagesizes" :page-size="searchForm.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
             </div>
         </el-footer>
         <!-- 表格 -- 查看 弹窗 -->
@@ -72,20 +68,20 @@
                     <h3>设备详情</h3>
                     <div class="details">
                         <div class="left">
-                            <p>货柜名 ： <span>1234564</span></p>
-                            <p>货柜编号 ： <span>1234564</span></p>
-                            <p>货柜型号 ： <span>1234564</span></p>
-                            <p>DTU编号 ： <span>1234564</span></p>
-                            <p>货柜状态 ： <span>正常</span></p>
-                            <p>尺寸 ： <span>123cm * 564cm</span></p>
-                            <p>分配时间 ： <span>2010/10/15 10:20:00</span></p>
-                            <p>分配商家 ： <span>天上人间</span></p>
-                            <p>容量 ： <span>20</span></p>
+                            <p>货柜名 ： <span>{{views.name}}</span></p>
+                            <p>货柜编号 ： <span>{{views.surface_no}}</span></p>
+                            <p>货柜型号 ： <span>{{views.model}}</span></p>
+                            <p>DTU编号 ： <span>{{views.dtu_no}}</span></p>
+                            <p>货柜状态 ： <span>{{views.dto_status}}</span></p>
+                            <p>尺寸 ： <span>{{views.spec}}</span></p>
+                            <p>分配时间 ： <span>{{views.gmt_assign}}</span></p>
+                            <p>分配商家 ： <span>{{views.merchant_name}}</span></p>
+                            <p>容量 ： <span>{{views.volume}}</span></p>
                         </div>
                         <div class="right">
-                            <p class="imgTxt">DTU编号：13456465446  货柜编号：13415646</p>
+                            <p class="imgTxt">DTU编号：{{views.dtu_no}}  货柜编号：{{views.surface_no}}</p>
                             <div class="imgBox">
-                                <img src="../../assets/imgs/banner.jpg">
+                                <img :src="views.qrcode" v-show="views.qrcode">
                             </div>
                             <el-button @click="view_print">打 印</el-button>
                         </div>
@@ -94,7 +90,7 @@
                 <div class="prodInfo">
                     <h3>设备详情</h3>
                     <el-table :data="viewData" tooltip-effect="dark" style="width: 70%;margin:0 auto;" border>
-                        <el-table-column type="index" label="格子序号" align="center" width="200"></el-table-column>
+                        <el-table-column prop="grid_location" label="格子序号" align="center" width="200"></el-table-column>
                         <el-table-column prop="name" label="商品名称" align="center"></el-table-column>
                         <el-table-column prop="price" label="商品价格" align="center"></el-table-column>元
                     </el-table>
@@ -108,27 +104,26 @@
                     <el-input v-model="set_add_form.name" placeholder="请输入货柜名（不验重）"></el-input>
                 </el-form-item>
                 <el-form-item label="货柜编号">
-                    <el-input v-model="set_add_form.code" disabled></el-input>
+                    <el-input v-model="set_add_form.surface_no" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="货柜型号">
-                    <el-input v-model="set_add_form.type" disabled></el-input>
+                    <el-input v-model="set_add_form.model" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="DTU编号">
-                    <el-input v-model="set_add_form.dtu" disabled></el-input>
+                    <el-input v-model="set_add_form.dtu_no" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="货柜状态">
-                    <el-input v-model="set_add_form.state" disabled></el-input>
+                    <el-input v-model="set_add_form.dto_status" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="尺寸" prop="size">
-                    <el-input v-model="set_add_form.size" disabled></el-input>
+                    <el-input v-model="set_add_form.spec" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="容量" prop="volume">
                     <el-input v-model="set_add_form.volume" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="分配商家" prop="business">
-                    <el-select v-model="set_add_form.business">
-                        <el-option label="分配商家一" value="0"></el-option>
-                        <el-option label="分配商家二" value="1"></el-option>
+                <el-form-item label="分配商家" prop="merchant_name">
+                    <el-select v-model="set_add_form.merchant_name">
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in business" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -148,24 +143,24 @@
         <!-- 清除/删除 第二次提示弹窗 -->
         <el-dialog title="输入密码" :visible.sync="curShowOne" width="30%" @close="closeDialog" :close-on-click-modal='false'>
             <p v-show="curShowTwo" class="curShowTwo"><span>交易密码 ：</span> <el-input v-model="buyPassword" placeholder="请输入交易密码"></el-input></p>
-            <span style="font-size:18px;" v-show="curShowThree"><i class="el-icon-success" style="margin-right:5px;"></i>操作成功！</span>
+            <!-- <span style="font-size:18px;" v-show="curShowThree"><i class="el-icon-success" style="margin-right:5px;"></i>操作成功！</span>
             <span style="font-size:18px;" v-show="curShowFour"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码错误，你今天还有3次机会！</span>
-            <span style="font-size:18px;" v-show="curShowFive"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码已无效，请重新设置交易密码！</span>
+            <span style="font-size:18px;" v-show="curShowFive"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码已无效，请重新设置交易密码！</span> -->
             <span slot="footer" class="dialog-footer">
                 <el-button @click="curcancelClick">取 消</el-button>
                 <el-button type="primary" @click="curSureClick">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 表格 -- 配置/添加 弹窗 不同商家 -->
-        <el-dialog title="批量配置提示" :visible.sync="set_mention_visible" width="30%" @close="setVisible = false" :close-on-click-modal='false'>
+        <!-- <el-dialog title="批量配置提示" :visible.sync="set_mention_visible" width="30%" @close="setVisible = false" :close-on-click-modal='false'>
             <span style="font-size:18px;"><i class="el-icon-warning" style="margin-right:5px;"></i>你选中的设备已分配给了不同的商家，继续配置后原商家将无法管理该货柜！</span>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="setVisible = false">取 消</el-button>
                 <el-button type="primary" @click="setClick">继续配置</el-button>
             </span>
-        </el-dialog>
+        </el-dialog> -->
         <!-- 底部按钮 配置/添加 弹窗 -->
-        <el-dialog title="设备批量配置" :visible.sync="set_visible" width="35%" :close-on-click-modal='false'>
+        <!-- <el-dialog title="设备批量配置" :visible.sync="set_visible" width="35%" :close-on-click-modal='false'>
             <el-form :model="set_form" class="set_form" :rules="set_rule" ref="set_form" label-width="120px">
                 <el-form-item label="货柜名">
                     <div class="nameBox iconBox" v-model="set_form.name">
@@ -208,7 +203,7 @@
                 <el-button>取 消</el-button>
                 <el-button>确 定</el-button>
             </span>
-        </el-dialog>
+        </el-dialog> -->
     </el-container>
 
 </template>
@@ -337,20 +332,22 @@
 </style>
 
 <script>
+import requestData  from '@/utils/requestMethod';
+import regRxp from '@/utils/validate';
 export default {
     data() {
         return {
             searchForm:{
-                type:'',
-                state:'',
-                business:'',
-                name:'',
-                date:'',
-                curpage:1,
-                pagesize:10,
-                pagesizes:[10,20,50,100],
-                total:100
+                model_id:'',
+                dto_status:'',
+                bind_status:'',
+                ckeys:'',
+                gmt_assign:'',
+                page:1,
+                limit:10,
             },
+            pagesizes:[10,20,50,100],
+            total:0,
             day_one:'',
             day_two:'',
             pickerOptions:{
@@ -358,138 +355,44 @@ export default {
                     return time.getTime() > Date.now();
                 }
             },
-            tableData:[
-                {
-                    name:'11楼1号',
-                    type:'xx12345',
-                    bodycode:'xxa123456789',
-                    dtu:'123456',
-                    code:'123456',
-                    state:'断电',
-                    volume:'8',
-                    salenum:'12',
-                    business:'天上人间',
-                    businessstate:'已绑定',
-                    createTime:'2019/10/02 12：00：15'
-                },
-                {
-                    name:'11楼1号',
-                    type:'xx12345',
-                    bodycode:'xxa123456789',
-                    dtu:'123456',
-                    code:'123456',
-                    state:'断电',
-                    volume:'8/12',
-                    salenum:'12',
-                    business:'天上人间',
-                    businessstate:'已绑定',
-                    createTime:'2019/10/02 12：00：15'
-                },
-                {
-                    name:'11楼1号',
-                    type:'xx12345',
-                    bodycode:'xxa123456789',
-                    dtu:'123456',
-                    code:'123456',
-                    state:'断电',
-                    volume:'8/12',
-                    salenum:'12',
-                    business:'天上人间',
-                    businessstate:'已绑定',
-                    createTime:'2019/10/02 12：00：15'
-                },
-                {
-                    name:'11楼1号',
-                    type:'xx12345',
-                    bodycode:'xxa123456789',
-                    dtu:'123456',
-                    code:'123456',
-                    state:'断电',
-                    volume:'8/12',
-                    salenum:'12',
-                    business:'天上人间',
-                    businessstate:'已绑定',
-                    createTime:'2019/10/02 12：00：15'
-                },
-                {
-                    name:'11楼1号',
-                    type:'xx12345',
-                    bodycode:'xxa123456789',
-                    dtu:'123456',
-                    code:'123456',
-                    state:'断电',
-                    volume:'8/12',
-                    salenum:'12',
-                    business:'天上人间',
-                    businessstate:'已绑定',
-                    createTime:'2019/10/02 12：00：15'
-                },
-                {
-                    name:'11楼1号',
-                    type:'xx12345',
-                    bodycode:'xxa123456789',
-                    dtu:'123456',
-                    code:'123456',
-                    state:'断电',
-                    volume:'8/12',
-                    salenum:'12',
-                    business:'天上人间',
-                    businessstate:'已绑定',
-                    createTime:'2019/10/02 12：00：15'
-                },
-                {
-                    name:'11楼1号',
-                    type:'xx12345',
-                    bodycode:'xxa123456789',
-                    dtu:'123456',
-                    code:'123456',
-                    state:'断电',
-                    volume:'8/12',
-                    salenum:'12',
-                    business:'天上人间',
-                    businessstate:'已绑定',
-                    createTime:'2019/10/02 12：00：15'
-                },
-            ],
+            /***  筛选项 类型/状态/商家  *****/
+            type:[],
+            state:[],
+            business:[],
+            /**** 筛选项 类型/状态/商家  **** */
+            tableData:[],
             multipleSelection: [],
             view_visible:false,                 //查看
-            viewData:[
-                {
-                    name:'efefef efefe',
-                    price:'12.00'
-                },
-                {
-                    name:'efefef efefe',
-                    price:'12.00'
-                },
-            ],                        //查看列表
+            views:{},                       //查看信息
+            viewData:[],                        //查看列表
             set_add_visible:false,           //配置/添加弹窗
             set_mention_visible:false,       //底部配置操作按钮事件
             set_add_form:{                  //配置 表单
                 name:'',
-                code:'',
-                type:'',
-                dtu:'',
-                state:'',
-                size:'',
+                surface_no:'',
+                model:'',
+                dtu_no:'',
+                dto_status:'',
+                spec:'',
                 volume:'',
-                business:''
+                merchant_name:''
             },
             set_add_rule: {                 //配置 表单验证
                 name: [
                     { required: true, message: '请输入货柜名（不验重）', trigger: 'blur' }
                 ],
-                size: [
+                spec: [
                     { required: true, message: '请输入尺寸', trigger: 'blur' }
                 ],
                 volume: [
                     { required: true, message: '请输入容量', trigger: 'blur' }
                 ],
-                business: [
+                merchant_name: [
                     { required: true, message: '请选择分配商家', trigger: 'change' }
                 ],
             },
             curVisible:false,
+            id:'',                      //清除时要传id
             buyPassword:'',             //交易密码
             curShowOne:false,           //第二次弹窗
             curShowTwo:false,           //第二次弹窗 -- 交易密码显示
@@ -517,7 +420,66 @@ export default {
             stateVal:'',                //货柜状态
         }
     },
+    mounted(){
+        /** 获取筛选项 */
+        this.getType();
+        this.getState();
+        this.getBusiness();
+        /** 获取列表 */
+        this.getList();
+    },
     methods:{
+        /**  筛选项 -- 货柜型号 */
+        getType(){
+            requestData('/api/container/spec/list',{},'get').then((res)=>{
+                if(res.status==200){
+                    this.type = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
+        /**  筛选项 -- 货柜状态 */
+        getState(){
+            requestData('/api/container/status',{},'get').then((res)=>{
+                if(res.status==200){
+                    this.state = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
+        /**  筛选项 -- 商家 */
+        getBusiness(){
+            requestData('/api/merchant/list',{},'get').then((res)=>{
+                if(res.status==200){
+                    this.business = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
+        /** 获取列表 */
+        getList(){
+            requestData('/api/container/list',{
+                ...this.searchForm
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.total = res.count;
+                    this.tableData = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
         /**搜索框 -- 查询 */
         search(){
             if(this.day_one&&this.day_two){
@@ -525,34 +487,86 @@ export default {
                     this.$message.error('开始时间不能大于结束时间');
                     return
                 }else{
-                    this.searchForm.date = this.day_one + ',' + this.day_two;
+                    this.searchForm.gmt_assign = this.day_one + '-' + this.day_two;
                 }
             }else if(this.day_one){
-                this.searchForm.date = this.day_one;
+                this.searchForm.gmt_assign = this.day_one;
             }else{
-                this.searchForm.date = this.day_two;
+                this.searchForm.gmt_assign = this.day_two;
             }
-            console.log(this.searchForm)
+            this.getList();
         },
         /** 查看 */
-        view(index){
+        view(id,index){
+            requestData('/api/container/detail',{
+                id:id
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.views = res.data;
+                    this.viewData = res.data.goods_list;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
             this.view_visible = true;
         },
         /** 查看 -- 打印 */
         view_print(){
             console.log(111)
         },
-        /**操作 -- 配置 */
-        settings(type,index){
-            console.log(type)
+        /**操作 -- 分配 */
+        settings(type,id,index){
+            var obj = {};
             if(type=='line'){
                 this.set_add_visible = true;
+                obj = JSON.stringify(this.tableData[index]);
+                this.set_add_form = JSON.parse(obj);
+                for(var i = 0; i < this.business.length; i++){
+                    if(this.set_add_form.merchant_name == this.business[i].name){
+                        this.set_add_form.merchant_name = this.business[i].id
+                    }
+                }
             }else{  //底部操作 同时还得是选择的不同的商家 才会显示此弹窗 否则直接为另一个配置弹窗(即点击继续配置的弹窗)
                 this.set_mention_visible = true;
             }
         },
+        /**配置/添加弹窗点击事件 */
+        set_add_cancel(){   //取消
+            this.set_add_form = {
+                name:'',
+                surface_no:'',
+                model:'',
+                dtu_no:'',
+                dto_status:'',
+                spec:'',
+                volume:'',
+                merchant_name:''
+            };
+            this.set_add_visible = false;
+        },
+        set_add_sure(){     //确认事件
+            requestData('/api/container/update',{
+                id:this.set_add_form.id,
+                operation:'assign',
+                name:this.set_add_form.name,
+                merchant:this.set_add_form.merchant_name
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.getList();
+                    this.$message.success(res.message);
+                }else{
+                    this.$message.error(res.message);
+                }
+                this.set_add_visible = false;
+            },(err)=>{
+                console.log(err)
+            })
+        },
         /**清除 第一次提示*/
-        metion(index){
+        metion(id,index){
+            this.id = id;
             this.curVisible = true;
         },
         /**清除 第一次弹窗确认事件 */
@@ -569,12 +583,39 @@ export default {
             if(!this.buyPassword){      //第一次 确认事件
                 this.$message.error('请输入交易密码！')
             }else{                      //第二次 确认事件
-                console.log(this.buyPassword)
-                this.curShowTwo = false;
-                // this.curShowThree = true;
-                // this.curShowFour = true;
-                this.curShowFive = true;
+                requestData('/api/auth/trade_pwd',{
+                    admin:sessionStorage.getItem('userid'),
+                    trade_pwd:this.buyPassword
+                },'get').then((res)=>{
+                    if(res.status==200){
+                        this.deletesSure();
+                    }else if(res.status == 400){
+                        this.$message.error(res.message)
+                        this.curShowOne = false;
+                        this.curShowTwo = false;
+                    }
+                },(err)=>{
+                    console.log(err)
+                })
             }
+        },
+        /** 删除成功 请求函数 */
+        deletesSure(){
+            requestData('/api/container/update',{
+                id:this.id,
+                operation:'clear'
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.$message.success(res.message);
+                    this.curShowOne = false;
+                    this.curShowTwo = false;
+                    this.getList();
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         /** 关闭弹窗事件 */
         closeDialog(){
@@ -603,28 +644,14 @@ export default {
         },
         /**页码操作 */
         handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+            this.searchForm.limit = val;
+            this.getList();
         },
         handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
+            this.searchForm.page = val;
+            this.getList();
         },
 
-        /**配置/添加弹窗点击事件 */
-        set_add_cancel(){
-            this.set_add_form = {
-                name:'',
-                type:'',
-                volume:'',
-                bodycode:'',
-                code:'',
-                state:'',
-                business:''
-            };
-            this.set_add_visible = false;
-        },
-        set_add_sure(){
-            this.set_add_visible = false;
-        },
         /**底部配置 -- 继续配置事件 */
         setClick(){ 
             this.set_mention_visible = false;

@@ -6,6 +6,10 @@ export function getToken() {
   return sessionStorage.getItem('token')
 }
 
+export function isLogin(){
+	return sessionStorage.getItem("token") && sessionStorage.getItem("userid")
+}
+
 export function setToken(token) {
   return Cookies.set(TokenKey, token)
 }

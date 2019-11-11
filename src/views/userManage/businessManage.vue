@@ -126,8 +126,8 @@
         <el-dialog title="输入密码" :visible.sync="curShowOne" width="30%" @close="closeCurDialog" :close-on-click-modal='false'>
             <p v-show="curShowTwo" class="curShowTwo"><span>交易密码 ：</span> <el-input v-model="buyPassword" placeholder="请输入交易密码"></el-input></p>
             <span style="font-size:18px;" v-show="curShowThree"><i class="el-icon-success" style="margin-right:5px;"></i>操作成功！</span>
-            <span style="font-size:18px;" v-show="curShowFour"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码错误，你今天还有3次机会！</span>
-            <span style="font-size:18px;" v-show="curShowFive"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码已无效，请重新设置交易密码！</span>
+            <!-- <span style="font-size:18px;" v-show="curShowFour"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码错误，你今天还有3次机会！</span>
+            <span style="font-size:18px;" v-show="curShowFive"><i class="el-icon-warning" style="margin-right:5px;"></i>交易密码已无效，请重新设置交易密码！</span> -->
             <span slot="footer" class="dialog-footer">
                 <el-button @click="curcancelClick">取 消</el-button>
                 <el-button type="primary" @click="curSureClick">确 定</el-button>
@@ -446,12 +446,13 @@ export default {
         },
         /** 表格操作 -- 删除 */
         deletes(id,index){
-            if(this.tableData[index].container_amount==0){      //数量为0 不可删除
-                this.isCommon = false;   
-            }else{
+            if(this.tableData[index].container_amount==0){      //数量为0 可以删除
                 this.isCommon = true;   
+            }else{
+                this.isCommon = false;   
             }
             this.curVisible = true;
+            this.id = id;
             if(this.isCommon){
                 this.curMention = '删除该商家后，平台将无法管理该商家！';
             }else{
@@ -476,18 +477,19 @@ export default {
                 this.$message.error('请输入交易密码！')
             }else{                      //第二次 确认事件
                 requestData('/api/auth/trade_pwd',{
+                    admin:sessionStorage.getItem('userid'),
                     trade_pwd:this.buyPassword
                 },'get').then((res)=>{
-                    console.log(res)
+                    if(res.status==200){
+                        this.deletesSure();
+                    }else if(res.status == 400){
+                        this.$message.error(res.message)
+                        this.curShowOne = false;
+                        this.curShowTwo = false;
+                    }
                 },(err)=>{
                     console.log(err)
                 })
-                // console.log(this.curTitle)
-                // console.log(this.buyPassword)
-                // this.curShowTwo = false;
-                // // this.curShowThree = true;
-                // // this.curShowFour = true;
-                // this.curShowFive = true;
             }
         },
         /** 删除成功 请求函数 */
@@ -496,7 +498,10 @@ export default {
                 id:this.id
             },'get').then((res)=>{
                 if(res.status==200){
-                    console.log(res)
+                    this.$message.success(res.message);
+                    this.curShowOne = false;
+                    this.curShowTwo = false;
+                    this.getList();
                 }else{
                     this.$message.error(res.message);
                 }
