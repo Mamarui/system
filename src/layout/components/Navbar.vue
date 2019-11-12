@@ -55,9 +55,9 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    logout() {
-      this.$router.push(`/login`)
+    logout() {    //先跳转 再清空session
       sessionStorage.clear();
+      this.$router.push(`/login`)
     }
   }
 }

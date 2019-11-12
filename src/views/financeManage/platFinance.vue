@@ -1,18 +1,18 @@
 <template>
     <el-container class="container">
         <el-main class="main">
-			<p class="title">平台资金结余 ： <span class="num">200，000.00</span> 元</p>
+			<p class="title">累计商家未提现 ： <span class="num">{{topInfo.capitalPool}}</span> 元</p>
             <div class="top">
                 <router-link to="platIncome" class="tab">
-                    <p class="number">200,000,000.00</p>
+                    <p class="number">{{topInfo.total}}</p>
                     <p class="text">平台累计销售额（元）</p>
                 </router-link>
                 <router-link to="platIncome" class="tab">
-                    <p>200,000,000.00</p>
+                    <p>{{topInfo.platform_fee}}</p>
                     <p>平台累计收益（元）</p>
                 </router-link>
                 <router-link to="businessIncome" class="tab">
-                    <p>200,000,000.00</p>
+                    <p>{{topInfo.comission}}</p>
                     <p>返佣累计提现（元）</p>
                 </router-link>
             </div>
@@ -114,9 +114,11 @@
 
 <script>
 import $ from 'jquery'
+import requestData  from '@/utils/requestMethod';
 export default {
     data() {
         return {
+				topInfo:{},				//上部分信息
 				changeState:'年',		//根据不同筛选条件展示折线图不同的title
 				year:true,				//折线图日期筛选条件根据不同筛选条件的展示隐藏 -- 年（默认展示）
 				month:false,			//折线图日期筛选条件根据不同筛选条件的展示隐藏 -- 月（默认不展示）
@@ -140,11 +142,23 @@ export default {
         }
     },
     mounted(){
+		this.getTopInfo();
 		this.getYear();
         this.initCharts(this.defaultYear,'year');
     },
     methods:{
-        
+		/** 获取上部分信息 */
+		getTopInfo(){
+			requestData('/api/capi/overview',{},'get').then((res)=>{
+                if(res.status==200){
+                    this.topInfo = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+		},
 		/**筛选条件 年 */
 		getYears(type){
 			this.defaultYear = [];

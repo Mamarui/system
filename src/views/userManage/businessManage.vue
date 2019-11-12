@@ -111,7 +111,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="closeDialog">取 消</el-button>
-                <el-button @click="sureClick">添加/保存</el-button>
+                <el-button @click="sureClick('add_edit_form')">添加/保存</el-button>
             </span>
         </el-dialog>
         <!-- 删除 第一次提示弹窗 -->
@@ -415,7 +415,7 @@ export default {
             this.add_edit_visible = false;
         },
         /** 表格操作 -- 编辑（同添加） --确定事件 */
-        sureClick(){
+        sureClick(formName){
             var _url = '';
             if(this.isEdit){
                 _url = '/api/merchant/update';

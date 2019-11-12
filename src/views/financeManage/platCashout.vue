@@ -2,21 +2,19 @@
     <el-container class="container">
         <el-header class="header">
             <el-form :inline="true" :model="searchForm" class="form">
-                <el-form-item>
-                    <el-select v-model="searchForm.paystate" placeholder="到账状态">
-                        <el-option label="所有" value=""></el-option>
-                        <el-option label="到账" value="0"></el-option>
-                        <el-option label="转账中" value="1"></el-option>
-                        <el-option label="转账失败" value="2"></el-option>
+                <el-form-item label="到账状态">
+                    <el-select v-model="searchForm.withdraw_status">
+                        <el-option label="全部" value=""></el-option>
+                        <el-option :label="item" :value="index" v-for="(item,index) in withdraw_status" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="提现时间">
-                    <el-date-picker v-model="searchForm.day_one" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_one" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
                     <span> - </span>
-                    <el-date-picker v-model="searchForm.day_two" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_two" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
                 </el-form-item>
                 <el-form-item style="margin-right:5%;">
-                    <el-input v-model="searchForm.name" placeholder="请输入商家名称/流水号/手机号" style="width:125%"></el-input>
+                    <el-input v-model="searchForm.keywords" placeholder="请输入商家名称/流水号/手机号" style="width:125%"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
@@ -36,32 +34,31 @@
                 <el-table-column prop="paidtime" label="提现时间" align="center" width="180"></el-table-column>
                 <el-table-column label="操作" align="center" width="100">
                     <template slot-scope="scope">
-                        <el-button @click.native.prevent="view(scope.$index)" type="text" size="small">查看明细</el-button>
+                        <el-button @click.native.prevent="view(scope.row.id,scope.$index)" type="text" size="small">查看明细</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-main>
         <el-footer class="footer">
-            <p class="total">累计提现<span>200，000.00</span>元，累计商家未提现<span>20，000.00</span>元</p>
-            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.curpage" :page-sizes="searchForm.pagesizes" :page-size="searchForm.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="searchForm.total"></el-pagination>
+            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.page" :page-sizes="pagesizes" :page-size="searchForm.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
         </el-footer>
         <el-dialog title="提现明细" :visible.sync="curVisible" width="45%" @close="curVisible = false" center :close-on-click-modal='false'>
             <div class="main">
                 <div class="userInfo infoBox">
-                    <p><span>提现流水 ：</span>1561561561561</p>
-                    <p><span>提现方式 ：</span>银行卡转账</p>
-                    <p><span>提现账号 ：</span>13526261414</p>
-                    <p><span>提现金额 ：</span>5.00元</p>
-                    <p><span>提现时间 ：</span>2019/10/09 15：00：20</p>
-                    <p><span>到账状态 ：</span>转帐中</p>
+                    <p><span>提现流水 ：</span>{{details.withdraw_no}}</p>
+                    <p><span>提现方式 ：</span>{{details.type}}</p>
+                    <p><span>提现账号 ：</span>{{details.bank_account}}</p>
+                    <p><span>提现金额 ：</span>{{details.amount}}元</p>
+                    <p><span>提现时间 ：</span>{{details.gmt_created}}</p>
+                    <p><span>到账状态 ：</span>{{details.withdraw_status}}</p>
                 </div>
                 <div class="orderInfo infoBox">
-                    <p><span>商家名称 ：</span>天上人间</p>
-                    <p><span>中介 ：</span>张三</p>
-                    <p><span>手机号 ：</span>15101256644</p>
-                    <p><span>商家累计提现 ：</span>5.00元</p>
-                    <p><span>商家资金账号 ：</span>22525252525255</p>
-                    <p><span>商家资金余额 ：</span>5.00元</p>
+                    <p><span>商家名称 ：</span>{{details.merchant_name}}</p>
+                    <p><span>中介 ：</span>{{details.contact}}</p>
+                    <p><span>手机号 ：</span>{{details.phone}}</p>
+                    <p><span>商家累计提现 ：</span>{{details.his_amount}}元</p>
+                    <!-- <p><span>商家资金账号 ：</span>{{details.withdraw_no}}</p> -->
+                    <p><span>商家资金余额 ：</span>{{details.balance}}元</p>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -138,82 +135,97 @@
 </style>
 
 <script>
+import requestData  from '@/utils/requestMethod';
 export default {
     data() {
         return {
+            withdraw_status:[],     //到账状态
             searchForm:{
-                paystate:'',
-                day_one:'',
-                day_two:'',
-                name:'',
-                curpage:1,
-                pagesizes:[10,20,50,100],
-                pagesize:10,
-                total:100
+                withdraw_status:'',
+                gmt_created:'',
+                keywords:'',
+                page:1,
+                limit:10,
             },
+            day_one:'',
+            day_two:'',
+            pagesizes:[10,20,50,100],
+            total:100,
             pickerOptions:{
                 disabledDate(time) {
                     return time.getTime() > Date.now();
                 }
             },
-            tableData:[
-                {
-                    orderuser:'天上人间',
-                    orderprice:'500，00.000',
-                    orderbusiness:'天上人间',
-                    orderaccount:'456454645',
-                    orderway:'银行卡转账',
-                    backprice:'200',
-                    paystate:'到账',
-                    paidtime:'2015/11/10 15：00：15'
-                },
-                {
-                    orderuser:'天上人间',
-                    orderprice:'500，00.000',
-                    orderbusiness:'天上人间',
-                    orderaccount:'456454645',
-                    orderway:'银行卡转账',
-                    backprice:'200',
-                    paystate:'到账',
-                    paidtime:'2015/11/10 15：00：15'
-                },
-                {
-                    orderuser:'天上人间',
-                    orderprice:'500，00.000',
-                    orderbusiness:'天上人间',
-                    orderaccount:'456454645',
-                    orderway:'银行卡转账',
-                    backprice:'200',
-                    paystate:'到账',
-                    paidtime:'2015/11/10 15：00：15'
-                },
-                {
-                    orderuser:'天上人间',
-                    orderprice:'500，00.000',
-                    orderbusiness:'天上人间',
-                    orderaccount:'456454645',
-                    orderway:'银行卡转账',
-                    backprice:'200',
-                    paystate:'到账',
-                    paidtime:'2015/11/10 15：00：15'
-                },
-            ],
+            tableData:[],
             curVisible:false,        //用户详情 弹窗
+            details:{},             //用户详情
         }
     },
+    mounted(){
+        this.getStatus();
+        this.getList();
+    },
     methods:{
+        /**获取到账状态 */
+        getStatus(){
+            requestData('/api/orders/transfer_status',{},'get').then((res)=>{
+                if(res.status==200){
+                    this.withdraw_status = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
+        /** 获取列表 */
+        getList(){
+            requestData('/api/capi/merchat/withdrawlog/list',{
+                ...this.searchForm
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.tableData = res.data;
+                    this.total = res.count;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
         /** 搜索 */
         search(){
-            console.log(this.searchForm)
+            if(this.day_one&&this.day_two){
+                if(this.day_one > this.day_two){
+                    this.$message.error('开始时间不能大于结束时间！');
+                }else{
+                    this.searchForm.gmt_created = this.day_one + '~' + this.day_two;
+                }
+            }else if(this.day_one && !this.day_two){
+                this.searchForm.gmt_created = this.day_one;
+            }else{
+                this.searchForm.gmt_created = this.day_two;
+            }
+            this.getList();
         },
         /** XSL导出 */
         exportXLS(){
 
         },
         /** 表单操作 查看 */
-        view(index){
-            // console.log(index)
-            this.curVisible = true;
+        view(id,index){
+            requestData('/api/withdrawlog/detail',{
+                id:id
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.details = res.data;
+                    this.curVisible = true;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         /**页码操作 */
         handleSizeChange(val) {

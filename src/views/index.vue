@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
 		<el-main class="main">
-			<p class="title">平台资金结余 ： <span class="num">200，000.00</span> 元</p>
+			<p class="title">累计商家未提现 ： <span class="num">{{capitalPool}}</span> 元</p>
 			<div class="top">
 				<div id="tab-one" class="tab_one"></div>
 				<p class="title_in title_one">设备概览</p>
@@ -114,6 +114,7 @@ import $ from 'jquery'
 export default {
 	data() {
 		return {
+				capitalPool:0,			//累计商家未提现金额
 				changeState:'年',		//根据不同筛选条件展示折线图不同的title
 				year:true,				//折线图日期筛选条件根据不同筛选条件的展示隐藏 -- 年（默认展示）
 				month:false,			//折线图日期筛选条件根据不同筛选条件的展示隐藏 -- 月（默认不展示）
@@ -137,12 +138,25 @@ export default {
 			}
 	},
 	mounted(){
+		this.getCapitalPool();
 		this.getYear();
 		this.initCharts1();
 		this.initCharts2();
 		this.initCharts3(this.defaultYear,'year');
 	},
 	methods:{
+		/**获取累计商家未提现 */
+		getCapitalPool(){
+			requestData('/api/capi/overview',{},'get').then((res)=>{
+                if(res.status==200){
+                    this.capitalPool = res.data.capitalPool;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+		},
 		/**设备概览 -- 左上 */
 		initCharts1(){
 			var that = this;

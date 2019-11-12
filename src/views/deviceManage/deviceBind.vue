@@ -261,6 +261,7 @@ export default {
                 id:id
             },'get').then((res)=>{
                 if(res.status==200){
+                    this.set_add_visible = true;
                     this.set_add_form = res.data;
                 }else{
                     this.$message.error(res.message);
@@ -268,7 +269,6 @@ export default {
             },(err)=>{
                 console.log(err)
             })
-            this.set_add_visible = true;
         },
         /** 编辑 -- 货柜型号切换 */
         changeType(){
