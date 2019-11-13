@@ -2,17 +2,13 @@
     <el-container class="container">
         <el-header class="header">
             <el-form :inline="true" :model="searchForm" class="form">
-                <el-form-item label="交易时间">
-                    <el-select v-model="searchForm.paytime">
-                        <el-option label="首次交易时间" value="0"></el-option>
-                        <el-option label="最近交易时间" value="1"></el-option>
-                    </el-select>
-                    <el-date-picker v-model="searchForm.day_one" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                <el-form-item label="最近交易时间">
+                    <el-date-picker v-model="day_one" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                     <span> - </span>
-                    <el-date-picker v-model="searchForm.day_two" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_two" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="searchForm.name" placeholder="请输入订单用户/手机号"></el-input>
+                    <el-input v-model="searchForm.userKeywords" placeholder="请输入订单用户/手机号"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
@@ -22,22 +18,19 @@
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
-                <el-table-column prop="orderuser" label="订单用户" align="center"></el-table-column>
-                <el-table-column prop="mobile" label="用户手机号" align="center"></el-table-column>
-                <el-table-column prop="havepaid" label="已支付交易" align="center"></el-table-column>
-                <el-table-column prop="nopay" label="未支付交易" align="center"></el-table-column>
-                <el-table-column prop="totalpay" label="累计交易金额(元)" align="center"></el-table-column>
-                <el-table-column prop="firsttime" label="首次交易时间" align="center"></el-table-column>
-                <el-table-column prop="recenttime" label="最近交易时间" align="center"></el-table-column>
+                <el-table-column prop="name" label="订单用户" align="center"></el-table-column>
+                <el-table-column prop="phone" label="用户手机号" align="center"></el-table-column>
+                <el-table-column prop="total" label="累计交易金额(元)" align="center"></el-table-column>
+                <el-table-column prop="gmt_settle" label="最近交易时间" align="center"></el-table-column>
                 <el-table-column label="操作" align="center" width="100">
                     <template slot-scope="scope">
-                        <el-button @click.native.prevent="view(scope.$index)" type="text" size="small">查看</el-button>
+                        <el-button @click.native.prevent="view(scope.row.id,scope.$index)" type="text" size="small">查看</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-main>
         <el-footer class="footer">
-            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.curpage" :page-sizes="searchForm.pagesizes" :page-size="searchForm.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="searchForm.total"></el-pagination>
+            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.page" :page-sizes="pagesizes" :page-size="searchForm.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
         </el-footer>
         <el-dialog title="用户详情" :visible.sync="curVisible" width="45%" @close="curVisible = false" center :close-on-click-modal='false'>
             <div class="main">
@@ -172,93 +165,79 @@
 </style>
 
 <script>
+import requestData  from '@/utils/requestMethod';
 export default {
     data() {
         return {
             searchForm:{
-                paytime:'',
-                day_one:'',
-                day_two:'',
-                name:'',
-                curpage:1,
-                pagesizes:[10,20,50,100],
-                pagesize:10,
-                total:100
+                gmt_settle:'',
+                userKeywords:'',
+                page:1,
+                limit:10,
             },
+            pagesizes:[10,20,50,100],
+            total:100,
+            day_one:'',
+            day_two:'',
             pickerOptions:{
                 disabledDate(time) {
                     return time.getTime() > Date.now();
                 }
             },
-            tableData:[
-                {
-                    orderuser:'天上人间',
-                    mobile:'13526263535',
-                    havepaid:'151515151',
-                    nopay:'23232323',
-                    totalpay:'500，00.000',
-                    firsttime:'2015/11/10 15：00：15',
-                    recenttime:'2018/10/2 12：00：00'
-                },
-                {
-                    orderuser:'天上人间',
-                    mobile:'13526263535',
-                    havepaid:'151515151',
-                    nopay:'23232323',
-                    totalpay:'500，00.000',
-                    firsttime:'2015/11/10 15：00：15',
-                    recenttime:'2018/10/2 12：00：00'
-                },
-                {
-                    orderuser:'天上人间',
-                    mobile:'13526263535',
-                    havepaid:'151515151',
-                    nopay:'23232323',
-                    totalpay:'500，00.000',
-                    firsttime:'2015/11/10 15：00：15',
-                    recenttime:'2018/10/2 12：00：00'
-                },
-                {
-                    orderuser:'天上人间',
-                    mobile:'13526263535',
-                    havepaid:'151515151',
-                    nopay:'23232323',
-                    totalpay:'500，00.000',
-                    firsttime:'2015/11/10 15：00：15',
-                    recenttime:'2018/10/2 12：00：00'
-                },
-                {
-                    orderuser:'天上人间',
-                    mobile:'13526263535',
-                    havepaid:'151515151',
-                    nopay:'23232323',
-                    totalpay:'500，00.000',
-                    firsttime:'2015/11/10 15：00：15',
-                    recenttime:'2018/10/2 12：00：00'
-                },
-            ],
+            tableData:[],
             curVisible:false,        //用户详情 弹窗
         }
     },
+    mounted(){
+        this.getList();
+    },
     methods:{
+        /** 获取列表 */
+        getList(){
+            requestData('/api/orders/user/pcList',{
+                ...this.searchForm
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.tableData = res.data;
+                    this.total = res.count;
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
         /** 搜索 */
         search(){
-            console.log(this.searchForm)
+            if(this.day_one && this.day_two){
+                if(this.day_one > this.day_two){
+                    this.$message.error('开始时间不能大于结束时间！');
+                }else{
+                    this.searchForm.gmt_settle = this.day_one + '-' + this.day_two;
+                }
+            }else if(this.day_one && !this.day_two){
+                this.searchForm.gmt_settle = this.day_one;
+            }else{
+                this.searchForm.gmt_settle = this.day_two;
+            }
+            this.getList();
         },
         /** XSL导出 */
         exportXLS(){
 
         },
         /** 表单操作 查看 */
-        view(index){
-            // console.log(index)
+        view(id,index){
+            console.log(id)
             this.curVisible = true;
         },
         /**页码操作 */
         handleSizeChange(val) {
+            this.searchForm.limit = val;
+            this.getList();
             console.log(`每页 ${val} 条`);
         },
         handleCurrentChange(val) {
+            this.searchForm.page = val;
+            this.getList();
             console.log(`当前页: ${val}`);
         },
     }

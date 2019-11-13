@@ -28,16 +28,16 @@
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
-                <el-table-column prop="orderuser" label="订单用户" align="center"></el-table-column>
+                <el-table-column prop="name" label="订单用户" align="center"></el-table-column>
                 <el-table-column prop="phone" label="用户手机" align="center" width="120"></el-table-column>
-                <el-table-column prop="ordercode" label="订单号" align="center"></el-table-column>
-                <el-table-column prop="orderstate" label="订单状态" align="center" width="100"></el-table-column>
-                <el-table-column prop="orderprice" label="订单金额" align="center"></el-table-column>
-                <el-table-column prop="productnum" label="订单商品数" align="center" width="100"></el-table-column>
-                <el-table-column prop="business" label="订单商家" align="center"></el-table-column>
-                <el-table-column prop="boxcode" label="货柜编号" align="center"></el-table-column>
-                <el-table-column prop="tradestate" label="交易状态" align="center" width="100"></el-table-column>
-                <el-table-column prop="paytime" label="支付时间" align="center" width="180"></el-table-column>
+                <el-table-column prop="orderId" label="订单号" align="center"></el-table-column>
+                <el-table-column prop="order_status" label="订单状态" align="center" width="100"></el-table-column>
+                <!-- <el-table-column prop="orderprice" label="订单金额" align="center"></el-table-column> -->
+                <el-table-column prop="total" label="订单商品数" align="center" width="100"></el-table-column>
+                <!-- <el-table-column prop="business" label="订单商家" align="center"></el-table-column> -->
+                <el-table-column prop="surface_no" label="货柜编号" align="center"></el-table-column>
+                <el-table-column prop="trade_status" label="交易状态" align="center" width="100"></el-table-column>
+                <el-table-column prop="gmt_settle" label="支付时间" align="center" width="180"></el-table-column>
                 <el-table-column label="操作" align="center" width="60">
                     <template slot-scope="scope">
                         <el-button @click.native.prevent="view(scope.row.id,scope.$index)" type="text" size="small">查看</el-button>

@@ -24,14 +24,14 @@
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
-                <el-table-column prop="orderuser" label="提现流水" align="center"></el-table-column>
-                <el-table-column prop="orderprice" label="提现金额(元)" align="center"></el-table-column>
-                <el-table-column prop="orderbusiness" label="商家名称" align="center"></el-table-column>
-                <el-table-column prop="orderaccount" label="商家提现账号" align="center"></el-table-column>
-                <el-table-column prop="orderway" label="提现方式" align="center"></el-table-column>
-                <el-table-column prop="backprice" label="商家资金余额(元)" align="center"></el-table-column>
-                <el-table-column prop="paystate" label="到账状态" align="center"></el-table-column>
-                <el-table-column prop="paidtime" label="提现时间" align="center" width="180"></el-table-column>
+                <el-table-column prop="withdraw_no" label="提现流水" align="center"></el-table-column>
+                <el-table-column prop="amount" label="提现金额(元)" align="center"></el-table-column>
+                <el-table-column prop="merchant_name" label="商家名称" align="center"></el-table-column>
+                <el-table-column prop="bank_account" label="商家提现账号" align="center"></el-table-column>
+                <el-table-column prop="type" label="提现方式" align="center"></el-table-column>
+                <el-table-column prop="balance" label="商家资金余额(元)" align="center"></el-table-column>
+                <el-table-column prop="withdraw_status" label="到账状态" align="center"></el-table-column>
+                <el-table-column prop="gmt_created" label="提现时间" align="center" width="180"></el-table-column>
                 <el-table-column label="操作" align="center" width="100">
                     <template slot-scope="scope">
                         <el-button @click.native.prevent="view(scope.row.id,scope.$index)" type="text" size="small">查看明细</el-button>
@@ -180,7 +180,7 @@ export default {
         },
         /** 获取列表 */
         getList(){
-            requestData('/api/capi/merchat/withdrawlog/list',{
+            requestData('/api/withdrawlog/list',{
                 ...this.searchForm
             },'get').then((res)=>{
                 if(res.status==200){

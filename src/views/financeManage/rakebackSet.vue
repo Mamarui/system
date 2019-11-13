@@ -3,16 +3,16 @@
         <el-header class="header">
             <el-form :inline="true" :model="searchForm" class="form">
                 <el-form-item>
-                    <el-select v-model="searchForm.paytime">
+                    <el-select v-model="timeType">
                         <el-option label="创建时间" value="0"></el-option>
                         <el-option label="更新时间" value="1"></el-option>
                     </el-select>
-                    <el-date-picker v-model="searchForm.day_one" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_one" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                     <span> - </span>
-                    <el-date-picker v-model="searchForm.day_two" type="datetime" placeholder="选择日期" value-format="yyyy/MM/dd HH:mm:ss" :picker-options="pickerOptions">></el-date-picker>
+                    <el-date-picker v-model="day_two" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" :picker-options="pickerOptions">></el-date-picker>
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="searchForm.name" placeholder="请输入"></el-input>
+                    <el-input v-model="searchForm.cmkeys" placeholder="请输入"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
@@ -22,23 +22,23 @@
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
-                <el-table-column prop="business" label="商家名称" align="center"></el-table-column>
-                <el-table-column prop="businessaccount" label="商家返佣账号" align="center"></el-table-column>
-                <el-table-column prop="businessratio" label="商家返佣比例" align="center" width="150"></el-table-column>
-                <el-table-column prop="manager" label="中介" align="center"></el-table-column>
-                <el-table-column prop="manageraccount" label="中介返佣账号" align="center"></el-table-column>
-                <el-table-column prop="managerratio" label="中介返佣比例" align="center" width="150"></el-table-column>
-                <el-table-column prop="createtime" label="创建时间" align="center"></el-table-column>
-                <el-table-column prop="updatetime" label="更新时间" align="center"></el-table-column>
+                <el-table-column prop="merchant_name" label="商家名称" align="center"></el-table-column>
+                <el-table-column prop="bank_account" label="商家返佣账号" align="center"></el-table-column>
+                <el-table-column prop="merchant_fee_ratio" label="商家返佣比例" align="center" width="150"></el-table-column>
+                <el-table-column prop="broker_name" label="中介" align="center"></el-table-column>
+                <el-table-column prop="broker_account" label="中介返佣账号" align="center"></el-table-column>
+                <el-table-column prop="broker_fee_ratio" label="中介返佣比例" align="center" width="150"></el-table-column>
+                <el-table-column prop="gmt_created" label="创建时间" align="center"></el-table-column>
+                <el-table-column prop="gmt_modified" label="更新时间" align="center"></el-table-column>
                 <el-table-column label="操作" align="center" width="100">
                     <template slot-scope="scope">
-                        <el-button @click.native.prevent="view(scope.$index)" type="text" size="small">配置</el-button>
+                        <el-button @click.native.prevent="settings(scope.row.id,scope.$index)" type="text" size="small">配置</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-main>
         <el-footer class="footer">
-            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.curpage" :page-sizes="searchForm.pagesizes" :page-size="searchForm.pagesize" layout="total, sizes, prev, pager, next, jumper" :total="searchForm.total"></el-pagination>
+            <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.page" :page-sizes="pagesizes" :page-size="searchForm.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
         </el-footer>
         <!-- 表格 -- 配置 弹窗 -->
         <el-dialog title="配置返佣" :visible.sync="set_visible" width="35%" center :close-on-click-modal='false' @close="set_cancel">
@@ -49,21 +49,21 @@
             </div>
             <el-form :model="set_form" class="set_form" label-width="120px">
                 <el-form-item label="商家返佣比例">
-                    <el-input v-model="set_form.businessratio" placeholder="请输入"></el-input>
+                    <el-input v-model="set_form.merchant_fee_ratio" placeholder="请输入"></el-input>
                     <span>%</span>
                 </el-form-item>
                 <el-form-item label="返佣中介">
-                    <el-select v-model="set_form.manager" placeholder="请选择" style="width:80%">
+                    <el-select v-model="set_form.broker" placeholder="请选择" style="width:80%">
                         <el-option label="中介1" value="0"></el-option>
                         <el-option label="中介2" value="1"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="中介返佣比例">
-                    <el-input v-model="set_form.managerratio" placeholder="请输入"></el-input>
+                    <el-input v-model="set_form.broker_fee_ratio" placeholder="请输入"></el-input>
                     <span>%</span>
                 </el-form-item>
                 <el-form-item label="平台收益比例">
-                    <el-input v-model="set_form.benefitratio" disabled></el-input>
+                    <el-input v-model="set_form.platform_fee_ratio" disabled></el-input>
                     <span>%</span>
                 </el-form-item>
             </el-form>
@@ -132,113 +132,144 @@
 </style>
 
 <script>
+import requestData  from '@/utils/requestMethod';
 export default {
     data() {
         return {
+            timeType:'',        //时间类型
             searchForm:{
-                paytime:'',
-                paystate:'',
-                day_one:'',
-                day_two:'',
-                name:'',
-                curpage:1,
-                pagesizes:[10,20,50,100],
-                pagesize:10,
-                total:100
+                gmt_created:'',
+                gmt_modified:'',
+                cmkeys:'',
+                page:1,
+                limit:10,
             },
+            pagesizes:[10,20,50,100],
+            total:0,
             pickerOptions:{
                 disabledDate(time) {
                     return time.getTime() > Date.now();
                 }
             },
-            tableData:[
-                {
-                    business:'天上人间',
-                    businessaccount:'1111111111',
-                    businessratio:'1%',
-                    manager:'天上人间',
-                    manageraccount:'222222222222',
-                    managerratio:'1%',
-                    createtime:'2015/11/10 15：00：15',
-                    updatetime:'2015/11/10 15：00：15',
-                },
-                {
-                    business:'天上人间',
-                    businessaccount:'1111111111',
-                    businessratio:'1%',
-                    manager:'天上人间',
-                    manageraccount:'222222222222',
-                    managerratio:'1%',
-                    createtime:'2015/11/10 15：00：15',
-                    updatetime:'2015/11/10 15：00：15',
-                },
-                {
-                    business:'天上人间',
-                    businessaccount:'1111111111',
-                    businessratio:'1%',
-                    manager:'天上人间',
-                    manageraccount:'222222222222',
-                    managerratio:'1%',
-                    createtime:'2015/11/10 15：00：15',
-                    updatetime:'2015/11/10 15：00：15',
-                },
-                {
-                    business:'天上人间',
-                    businessaccount:'1111111111',
-                    businessratio:'1%',
-                    manager:'天上人间',
-                    manageraccount:'222222222222',
-                    managerratio:'1%',
-                    createtime:'2015/11/10 15：00：15',
-                    updatetime:'2015/11/10 15：00：15',
-                },
-            ],
+            day_one:'',
+            day_two:'',
+            tableData:[],
             set_visible:false,        //配置 弹窗
             set_form:{                  //配置 弹窗 表单
-                businessratio:'',
-                manager:'',
-                managerratio:'',
-                benefitratio:''
+                merchant_fee_ratio:'',
+                broker:'',
+                broker_fee_ratio:'',
+                platform_fee_ratio:''
             }, 
         }
     },
+    mounted(){
+        this.getList();
+    },
+    watch:{
+        timeType:function(){
+            this.searchForm.gmt_created = '';
+            this.searchForm.gmt_modified = '';
+        }
+    },
     methods:{
+        /** 获取列表 */
+        getList(){
+            requestData('/api/cmsnconfig/list',{
+                ...this.searchForm
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.tableData = res.data;
+                    this.total = res.count;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
         /** 搜索 */
         search(){
-            console.log(this.searchForm)
+            if(this.day_one&&this.day_two){
+                if(this.day_one > this.day_two){
+                    this.$message.error('开始时间不能大于结束时间！');
+                }else{
+                    if(this.timeType == 0){
+                        this.searchForm.gmt_created = this.day_one + '~' + this.day_two;
+                    }else{
+                        this.searchForm.gmt_modified = this.day_one + '~' + this.day_two;
+                    }
+                }
+            }else if(this.day_one&&!this.day_two){
+                if(this.timeType == 0){
+                    this.searchForm.gmt_created = this.day_one;
+                }else{
+                    this.searchForm.gmt_modified = this.day_one;
+                }
+            }else{
+                if(this.timeType == 0){
+                    this.searchForm.gmt_created = this.day_two;
+                }else{
+                    this.searchForm.gmt_modified = this.day_two;
+                }
+            }
+            this.getList();
         },
         /** XSL导出 */
         exportXLS(){
 
         },
-        /** 表单操作 查看 */
-        view(index){
-            // console.log(index)
-            this.set_visible = true;
+        /** 表单操作 配置 */
+        settings(id,index){
+            requestData('/api/cmsnconfig/detail',{
+                id:id
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.set_form = res.data;
+                    this.set_visible = true;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         /** 弹窗操作 -- 取消 */
         set_cancel(){
             this.set_form = {                  //配置 弹窗 表单
-                businessratio:'',
-                manager:'',
-                managerratio:'',
-                benefitratio:''
+                merchant_fee_ratio:'',
+                broker:'',
+                broker_fee_ratio:'',
+                platform_fee_ratio:''
             };
             this.set_visible = false;
-            console.log(this.set_form)
         },
         /** 弹窗操作 -- 确定 */
         set_sure(){
-            this.set_visible = false;
-            console.log(this.set_form)
+            requestData('/api/cmsnconfig/update',{
+                ...this.set_form
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.$message.success(res.message);
+                    this.set_visible = false;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         } ,
 
         /**页码操作 */
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
+            this.searchForm.limit = val;
+            this.getList();
         },
         handleCurrentChange(val) {
             console.log(`当前页: ${val}`);
+            this.searchForm.page = val;
+            this.getList();
         },
     }
 }
