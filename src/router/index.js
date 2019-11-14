@@ -47,7 +47,7 @@ export const constantRouterMap = [
     {
       path: '/password',
       name:'password',
-      hidden: true,
+      hidden: false,
       component: Layout,
       redirect: '/password',
       meta: { title: '密码', icon: 'dashboard' },
@@ -56,25 +56,15 @@ export const constantRouterMap = [
           path: 'forgetPassword',
           name: 'forgetPassword',
           component: () => import('@/views/password/forgetPassword'),
-          meta: { title: '忘记密码', icon: 'dashboard' }
-        },
-        {
-          path: 'renewPassword',
-          name: 'renewPassword',
-          component: () => import('@/views/password/renewPassword'),
-          meta: { title: '重置密码', icon: 'dashboard' }
-        },
-        {
-          path: 'fixPayPassword',
-          name: 'fixPayPassword',
-          component: () => import('@/views/password/fixPayPassword'),
-          meta: { title: '修改交易密码', icon: 'dashboard' }
+          meta: { title: '重置密码', icon: 'dashboard' },
+          hidden:false
         },
         {
           path: 'renewPayPassword',
           name: 'renewPayPassword',
           component: () => import('@/views/password/renewPayPassword'),
-          meta: { title: '重置交易密码', icon: 'dashboard' }
+          meta: { title: '重置交易密码', icon: 'dashboard' },
+          hidden:false
         }
       ]
     },

@@ -22,18 +22,6 @@ export const asyncRouterMap = [
           meta: { title: '忘记密码', icon: 'dashboard' }
         },
         {
-          path: 'renewPassword',
-          name: 'renewPassword',
-          component: () => import('@/views/password/renewPassword'),
-          meta: { title: '重置密码', icon: 'dashboard' }
-        },
-        {
-          path: 'fixPayPassword',
-          name: 'fixPayPassword',
-          component: () => import('@/views/password/fixPayPassword'),
-          meta: { title: '修改交易密码', icon: 'dashboard' }
-        },
-        {
           path: 'renewPayPassword',
           name: 'renewPayPassword',
           component: () => import('@/views/password/renewPayPassword'),

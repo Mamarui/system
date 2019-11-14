@@ -11,12 +11,12 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/password/renewPassword">
+          <router-link to="/password/forgetPassword">
             <el-dropdown-item>
               修改密码
             </el-dropdown-item>
           </router-link>
-          <router-link to="/password/fixPayPassword">
+          <router-link to="/password/renewPayPassword">
             <el-dropdown-item>
               修改交易密码
             </el-dropdown-item>
