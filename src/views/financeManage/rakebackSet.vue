@@ -43,9 +43,9 @@
         <!-- 表格 -- 配置 弹窗 -->
         <el-dialog title="配置返佣" :visible.sync="set_visible" width="35%" center :close-on-click-modal='false' @close="set_cancel">
             <div class="userInfo">
-                <p><span>返佣商家 ：</span>天上人间</p>
-                <p><span>货柜数量 ：</span>30</p>
-                <p><span>货柜总容量 ：</span>150</p>
+                <p><span>返佣商家 ：</span>{{set_form.merchant_name}}</p>
+                <p><span>货柜数量 ：</span>{{set_form.total}}</p>
+                <p><span>货柜总容量 ：</span>{{set_form.volume}}</p>
             </div>
             <el-form :model="set_form" class="set_form" label-width="120px">
                 <el-form-item label="商家返佣比例">
@@ -54,8 +54,7 @@
                 </el-form-item>
                 <el-form-item label="返佣中介">
                     <el-select v-model="set_form.broker" placeholder="请选择" style="width:80%">
-                        <el-option label="中介1" value="0"></el-option>
-                        <el-option label="中介2" value="1"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in user_list" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="中介返佣比例">
@@ -159,8 +158,9 @@ export default {
                 merchant_fee_ratio:'',
                 broker:'',
                 broker_fee_ratio:'',
-                platform_fee_ratio:''
+                platform_fee_ratio:'',
             }, 
+            user_list:[],               //中介列表
         }
     },
     mounted(){
@@ -219,12 +219,25 @@ export default {
         exportXLS(){
 
         },
+        /** 中介列表 */
+        getUserlist(){
+            requestData('/api/user/list',{},'get').then((res)=>{
+                if(res.status==200){
+                    this.user_list = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
+        },
         /** 表单操作 配置 */
         settings(id,index){
             requestData('/api/cmsnconfig/detail',{
                 id:id
             },'get').then((res)=>{
                 if(res.status==200){
+                    this.getUserlist();
                     this.set_form = res.data;
                     this.set_visible = true;
                 }else{
@@ -247,10 +260,16 @@ export default {
         /** 弹窗操作 -- 确定 */
         set_sure(){
             requestData('/api/cmsnconfig/update',{
-                ...this.set_form
+                id:this.set_form.id,
+                merchant:this.set_form.merchant,
+                merchant_fee_ratio:this.set_form.merchant_fee_ratio,
+                broker:this.set_form.broker,
+                broker_fee_ratio:this.set_form.broker_fee_ratio,
+                platform_fee_ratio:this.set_form.platform_fee_ratio,
             },'get').then((res)=>{
                 if(res.status==200){
                     this.$message.success(res.message);
+                    this.getList();
                     this.set_visible = false;
                 }else{
                     this.$message.error(res.message);

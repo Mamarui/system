@@ -57,7 +57,7 @@
                     <p><span>中介 ：</span>{{details.contact}}</p>
                     <p><span>手机号 ：</span>{{details.phone}}</p>
                     <p><span>商家累计提现 ：</span>{{details.his_amount}}元</p>
-                    <!-- <p><span>商家资金账号 ：</span>{{details.withdraw_no}}</p> -->
+                    <p><span>商家资金账号 ：</span>{{details.bank_account}}</p>
                     <p><span>商家资金余额 ：</span>{{details.balance}}元</p>
                 </div>
             </div>
@@ -229,9 +229,13 @@ export default {
         },
         /**页码操作 */
         handleSizeChange(val) {
+            this.searchForm.limit = val;
+            this.getList();
             console.log(`每页 ${val} 条`);
         },
         handleCurrentChange(val) {
+            this.searchForm.page = val;
+            this.getList();
             console.log(`当前页: ${val}`);
         },
     }

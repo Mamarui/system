@@ -44,12 +44,12 @@
             <div class="main">
                 <div class="userInfo infoBox">
                     <p><span>订单用户 ：</span>{{source.customer}}</p>
-                    <!-- <p><span>用户手机 ：</span>{{source.customer}}</p> -->
+                    <p><span>用户手机 ：</span>{{source.phone}}</p>
                     <p><span>订单号 ：</span>{{source.orderId}}</p>
                     <p><span>订单状态 ：</span>{{source.order_status}}</p>
                     <p><span>交易状态 ：</span>{{source.trade_status}}</p>
                     <p><span>订单金额 ：</span>{{source.total}}</p>
-                    <!-- <p><span>订单商品数 ：</span>{{source.customer}}</p> -->
+                    <p><span>订单商品数 ：</span>{{source.shopNum}}</p>
                     <p><span>支付时间 ：</span>{{source.gmt_created}}</p>
                 </div>
                 <div class="orderInfo infoBox">
@@ -73,7 +73,7 @@
                     <p><span>返佣比例 ：</span>{{source.broker_fee_ratio}}%</p>
                     <p><span>返佣金额 ：</span>{{source.broker_fee}}元</p>
                     <p><span>返佣账号 ：</span>{{source.broker_account}}</p>
-                    <!-- <p><span>到账状态 ：</span>{{source.broker_name}}</p> -->
+                    <p><span>到账状态 ：</span>{{source.trade_status}}</p>
                     <p><span>（商家）返佣比例 ：</span>{{source.merchant_fee_ratio}}%</p>
                     <p><span>商家收入 ：</span>{{source.merchant_fee}}</p>
                     <p><span>商家账号 ：</span>{{source.bank_account}}</p>

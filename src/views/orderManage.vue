@@ -51,50 +51,32 @@
         <el-dialog title="订单详情" :visible.sync="curVisible" width="45%" @close="curVisible = false" center :close-on-click-modal='false'>
             <div class="main">
                 <div class="userInfo infoBox">
-                    <p><span>订单用户 ：</span>张三</p>
-                    <p><span>用户手机 ：</span>13526261414</p>
-                    <p><span>订单号 ：</span>13526261414</p>
-                    <p><span>订单状态 ：</span>13526261414</p>
-                    <p><span>交易状态 ：</span>12/1</p>
-                    <p><span>订单金额 ：</span>5.00元</p>
-                    <p><span>订单商品数 ：</span>2019/10/09 15：00：20</p>
-                    <p><span>支付时间 ：</span>2019/10/17 05：00：00</p>
+                    <p><span>订单用户 ：</span>{{details.customerName}}</p>
+                    <p><span>用户手机 ：</span>{{details.customerPhone}}</p>
+                    <p><span>订单号 ：</span>{{details.orderNumber}}</p>
+                    <p><span>订单状态 ：</span>{{details.orderStatus}}</p>
+                    <p><span>交易状态 ：</span>{{details.tradeStatus}}</p>
+                    <p><span>订单金额 ：</span>{{details.orderMoney}}元</p>
+                    <p><span>订单商品数 ：</span>{{details.number}}</p>
+                    <p><span>支付时间 ：</span>{{details.payDate}}</p>
                 </div>
                 <div class="orderInfo infoBox">
-                    <p><span>订单商家 ：</span>张三</p>
-                    <p><span>货柜名 ：</span>13526261414</p>
-                    <p><span>货柜容量 ：</span>12/1</p>
-                    <p><span>货柜型号 ：</span>5.00元</p>
-                    <p><span>货柜编号 ：</span>2019/10/09 15：00：20</p>
+                    <p><span>订单商家 ：</span>{{details.orderMerchat}}</p>
+                    <p><span>货柜名 ：</span>{{details.containerName}}</p>
+                    <p><span>货柜容量 ：</span>{{details.containerOnSale}}</p>
+                    <p><span>货柜型号 ：</span>{{details.containerModelId}}元</p>
+                    <p><span>货柜编号 ：</span>{{details.containerSurfaceNo}}</p>
                 </div>
-                <div class="productInfoBox">
-                    <div class="productInfo">
-                        <p><span>售出商品1 ：</span>张三</p>
-                        <p><span>货柜位置 ：</span>13526261414</p>
-                        <p><span>单价 ：</span>5.00元</p>
-                        <p><span>数量 ：</span>2019/10/09 15：00：20</p>
-                    </div>
-                    <div class="productInfo">
-                        <p><span>售出商品1 ：</span>张三</p>
-                        <p><span>货柜位置 ：</span>13526261414</p>
-                        <p><span>单价 ：</span>5.00元</p>
-                        <p><span>数量 ：</span>2019/10/09 15：00：20</p>
-                    </div>
-                    <div class="productInfo">
-                        <p><span>售出商品1 ：</span>张三</p>
-                        <p><span>货柜位置 ：</span>13526261414</p>
-                        <p><span>单价 ：</span>5.00元</p>
-                        <p><span>数量 ：</span>2019/10/09 15：00：20</p>
-                    </div>
-                    <div class="productInfo">
-                        <p><span>售出商品1 ：</span>张三</p>
-                        <p><span>货柜位置 ：</span>13526261414</p>
-                        <p><span>单价 ：</span>5.00元</p>
-                        <p><span>数量 ：</span>2019/10/09 15：00：20</p>
+                <div class="productInfoBox" v-if="details.goodsDtoList&&details.goodsDtoList.length!=0">
+                    <div class="productInfo" v-for="(item,index) in details.goodsDtoList" :key="index">
+                        <p><span>售出商品1 ：</span>{{item.goodsName}}</p>
+                        <p><span>货柜位置 ：</span>{{item.grdiLocation}}</p>
+                        <p><span>单价 ：</span>{{item.goodsPrice}}元</p>
+                        <p><span>数量 ：</span>{{item.goodsNum}}</p>
                     </div>
                 </div>
                 <div class="orderTotal">
-                    <p><span>订单合计 ：</span>张三</p>
+                    <p><span>订单合计 ：</span>{{details.orderMoney}}</p>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -199,6 +181,7 @@ export default {
             trade_status:[],        //筛选项 -- 交易状态
             tableData:[],
             curVisible:false,                //订单详情 弹窗
+            details:{},                      //订单详情 对象
         }
     },
     mounted(){
@@ -244,7 +227,7 @@ export default {
         },
         /** 搜索 */
         search(){
-            console.log(this.searchForm)
+            this.getList();
         },
         /** 导出xls */
         exportXLS(){
@@ -252,15 +235,29 @@ export default {
         },
         /** 表格操作 -- 查看 */
         view(id,index){
-            console.log(id)
-            this.curVisible = true;
+            requestData('/api/orders/detail',{
+                id:id
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.curVisible = true;
+                    this.details = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         
         /**页码操作 */
         handleSizeChange(val) {
+            this.searchForm.limit = val;
+            this.getList();
             console.log(`每页 ${val} 条`);
         },
         handleCurrentChange(val) {
+            this.searchForm.page = val;
+            this.getList();
             console.log(`当前页: ${val}`);
         },
     }

@@ -208,8 +208,8 @@ $cursor: #fff;
 		align-items: center;
 
 		.login-banner{
-			width: 680px;
-			height: 500px;
+			width: 620px;
+			height: 550px;
 			background-image: url('../../assets/imgs/banner.jpg');
 			background-size: 100% 100%;
 			position: relative;
@@ -221,8 +221,8 @@ $cursor: #fff;
 
 		.login-form {
 			position: relative;
-			width: 520px;
-			height: 500px;
+			width: 540px;
+			height: 550px;
 			max-width: 100%;
 			// padding: 160px 35px 0;
 			margin: 0 auto;

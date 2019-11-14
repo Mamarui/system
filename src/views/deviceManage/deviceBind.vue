@@ -261,6 +261,7 @@ export default {
                 id:id
             },'get').then((res)=>{
                 if(res.status==200){
+                    this.getType();
                     this.set_add_visible = true;
                     this.set_add_form = res.data;
                 }else{
@@ -280,9 +281,13 @@ export default {
         },
         /**页码操作 */
         handleSizeChange(val) {
+            this.searchForm.limit = val;
+            this.getList();
             console.log(`每页 ${val} 条`);
         },
         handleCurrentChange(val) {
+            this.searchForm.page = val;
+            this.getList();
             console.log(`当前页: ${val}`);
         },
 
