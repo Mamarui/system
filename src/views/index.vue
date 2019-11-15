@@ -38,6 +38,7 @@
 <style lang="scss" scoped>
 .container{
 	.main{
+		background-color: #f0eeee;
 		.title{
 			font-size: 18px;
 			.num{
@@ -56,7 +57,7 @@
 				width: 40%;
 				height: 400px;
 				float: left;
-				background-color: #E6E6E6;
+				background-color: #e0e0e0;
 			}
 			.tab_one{
 				margin-right: 10%;
@@ -85,7 +86,7 @@
 				width: 95%;
 				padding: 1%;
 				height: 500px;
-				background-color: #E6E6E6;
+				background-color: #e0e0e0;
 			}
 			.stateBox{
 				position: absolute;

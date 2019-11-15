@@ -38,14 +38,14 @@
                     <el-input v-model="set_add_form.surface_no" placeholder="请输入货柜编号（二维码）"></el-input>
                 </el-form-item>
                 <el-form-item label="货柜型号" prop="model">
-                    <el-radio-group v-model="set_add_form.is_new" @change="changeType">
-                        <el-radio label="已有型号" value="0"></el-radio>
-                        <el-radio label="新型号" value="1"></el-radio>
+                    <el-radio-group v-model="set_add_form.is_new">
+                        <el-radio :label="0">已有型号</el-radio>
+                        <el-radio :label="1">新型号</el-radio>
                     </el-radio-group>
-                    <el-select v-model="hasType" placeholder="请选择" v-show="set_add_form.isNew==0" style="width:80%;">
+                    <el-select v-model="hasType" placeholder="请选择" v-show="set_add_form.is_new==0" style="width:80%;">
                         <el-option :label="item.model" :value="item.model_id" v-for="(item,index) in type" :key="index"></el-option>
                     </el-select>
-                    <el-input v-model="newType" placeholder="请输入货柜型号" v-show="set_add_form.isNew==1"></el-input>
+                    <el-input v-model="newType" placeholder="请输入货柜型号" v-show="set_add_form.is_new==1"></el-input>
                 </el-form-item>
                 <el-form-item label="规格" prop="specifications">
                     <el-input v-model="set_add_form.width" placeholder="货柜宽度" style="width:38%"></el-input>
@@ -165,13 +165,12 @@ export default {
             type:[],                //已有型号
             set_add_form:{      //编辑/添加 表单
                 surface_no:'',
-                model:'已有型号',
+                is_new:'已有型号',
                 volume:'',
                 width:'',
                 height:'',
                 dtuCode:'',
-                dtuState:'',
-                is_new:''
+                dtuState:''
             },
             hasType:'',
             newType:'',
@@ -270,14 +269,6 @@ export default {
             },(err)=>{
                 console.log(err)
             })
-        },
-        /** 编辑 -- 货柜型号切换 */
-        changeType(){
-            if(this.set_add_form.type == '已有型号'){
-                this.isNew = false;
-            }else{
-                this.isNew = true;
-            }
         },
         /**页码操作 */
         handleSizeChange(val) {

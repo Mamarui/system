@@ -197,7 +197,7 @@ $cursor: #fff;
 .login-container {
 	min-height: 100%;
 	width: 100%;
-	background-color: $bg;
+	background-color: #8896B3;
 	overflow: hidden;
 	
 	.loginBox{
@@ -227,7 +227,7 @@ $cursor: #fff;
 			// padding: 160px 35px 0;
 			margin: 0 auto;
 			overflow: hidden;
-			background-color: #e3e5e4;
+			background-color: #e7e5e5;
 			border-top-right-radius: 10px;
 			border-bottom-right-radius: 10px;
 			display: flex;

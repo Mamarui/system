@@ -2,8 +2,8 @@
     <el-container class="container">
         <div class="steps">
             <el-steps :active="active" finish-status="success" :space="850" align-center>
-                <el-step title="密码找回"></el-step>
-                <el-step title="重置密码"></el-step>
+                <el-step title="交易密码找回"></el-step>
+                <el-step title="重置交易密码"></el-step>
             </el-steps>
         </div>
         <div class="login-table" v-show="active == 0">

@@ -37,40 +37,24 @@
                 <div class="basicInfoBox">
                     <h3>用户基础信息</h3>
                     <div class="basicInfo">
-                        <p><span>订单用户 ：</span>张三</p>
-                        <p><span>用户手机 ：</span>13526261414</p>
-                        <p><span>已支付/未支付交易 ：</span>12/1</p>
-                        <p><span>累计交易金额 ：</span>5.00元</p>
-                        <p><span>首次交易时间 ：</span>2019/10/09 15：00：20</p>
-                        <p><span>最近交易时间 ：</span>2019/10/17 05：00：00</p>
+                        <p><span>订单用户 ：</span>{{details.customerName}}</p>
+                        <p><span>用户手机 ：</span>{{details.customerPhone}}</p>
+                        <p><span>已支付/未支付交易 ：</span>{{details.payOrder}}/{{details.unPayOrder}}</p>
+                        <p><span>累计交易金额 ：</span>{{details.payMoney}}元</p>
+                        <p><span>首次交易时间 ：</span>{{details.firstPayDate}}</p>
+                        <p><span>最近交易时间 ：</span>{{details.recentPayDate}}</p>
                     </div>
                 </div>
                 <div class="tradeListBox">
                     <h3>用户交易流水</h3>
                     <div class="tradeList">
-                        <section class="tradeBox">
-                            <p><span>订单号 ：</span>151515151515151515115151515</p>
-                            <p><span>订单商品数 ：</span>16</p>
-                            <p><span>订单金额 ：</span>5.00元</p>
-                            <p><span>订单状态 ：</span>已支付</p>
-                            <p><span>支付时间 ：</span>2019/10/09 15：00：20</p>
-                            <p><span>交易状态 ：</span>交易成功</p>
-                        </section>
-                        <section class="tradeBox">
-                            <p><span>订单号 ：</span>151515151515151515115151515</p>
-                            <p><span>订单商品数 ：</span>16</p>
-                            <p><span>订单金额 ：</span>5.00元</p>
-                            <p><span>订单状态 ：</span>已支付</p>
-                            <p><span>支付时间 ：</span>2019/10/09 15：00：20</p>
-                            <p><span>交易状态 ：</span>交易成功</p>
-                        </section>
-                        <section class="tradeBox">
-                            <p><span>订单号 ：</span>151515151515151515115151515</p>
-                            <p><span>订单商品数 ：</span>16</p>
-                            <p><span>订单金额 ：</span>5.00元</p>
-                            <p><span>订单状态 ：</span>已支付</p>
-                            <p><span>支付时间 ：</span>2019/10/09 15：00：20</p>
-                            <p><span>交易状态 ：</span>交易成功</p>
+                        <section class="tradeBox" v-for="(item,index) in details.dtoList" :key="index">
+                            <p><span>订单号 ：</span>{{item.orderNumber}}</p>
+                            <p><span>订单商品数 ：</span>{{item.goodsNum}}</p>
+                            <p><span>订单金额 ：</span>{{item.orderMoney}}元</p>
+                            <p><span>订单状态 ：</span>{{item.orderStatus}}</p>
+                            <p><span>支付时间 ：</span>{{item.payDate}}</p>
+                            <p><span>交易状态 ：</span>{{item.tradeStatus}}</p>
                         </section>
                     </div>
                 </div>
@@ -186,6 +170,7 @@ export default {
             },
             tableData:[],
             curVisible:false,        //用户详情 弹窗
+            details:{},             //用户详情
         }
     },
     mounted(){
@@ -226,8 +211,19 @@ export default {
         },
         /** 表单操作 查看 */
         view(id,index){
-            console.log(id)
-            this.curVisible = true;
+            requestData('/api/orders/user/userOrderDetail',{
+                id:id,
+                orderSize:3
+            },'get').then((res)=>{
+                if(res.status==200){
+                    this.curVisible = true;
+                    this.details = res.data;
+                }else{
+                    this.$message.error(res.message);
+                }
+            },(err)=>{
+                console.log(err)
+            })
         },
         /**页码操作 */
         handleSizeChange(val) {
