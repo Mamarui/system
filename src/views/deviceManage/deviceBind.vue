@@ -31,7 +31,7 @@
         <el-footer class="footer">
             <el-pagination class="pages" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="searchForm.page" :page-sizes="pagesizes" :page-size="searchForm.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
         </el-footer>
-        <!-- 添加/编辑 弹窗 -->
+        <!-- 编辑 弹窗 -->
         <el-dialog title="设备绑定" :visible.sync="set_add_visible" width="35%" center :close-on-click-modal='false'>
             <el-form :model="set_add_form" class="set_add_form" :rules="set_add_rule" ref="set_add_form" label-width="120px">
                 <el-form-item label="货柜编号" prop="surface_no">
@@ -42,10 +42,10 @@
                         <el-radio :label="0">已有型号</el-radio>
                         <el-radio :label="1">新型号</el-radio>
                     </el-radio-group>
-                    <el-select v-model="hasType" placeholder="请选择" v-show="set_add_form.is_new==0" style="width:80%;">
+                    <el-select v-model="set_add_form.model_id" placeholder="请选择" v-show="set_add_form.is_new==0" style="width:80%;">
                         <el-option :label="item.model" :value="item.model_id" v-for="(item,index) in type" :key="index"></el-option>
                     </el-select>
-                    <el-input v-model="newType" placeholder="请输入货柜型号" v-show="set_add_form.is_new==1"></el-input>
+                    <el-input v-model="set_add_form.model" placeholder="请输入货柜型号" v-show="set_add_form.is_new==1"></el-input>
                 </el-form-item>
                 <el-form-item label="规格" prop="specifications">
                     <el-input v-model="set_add_form.width" placeholder="货柜宽度" style="width:38%"></el-input>
@@ -165,15 +165,15 @@ export default {
             type:[],                //已有型号
             set_add_form:{      //编辑/添加 表单
                 surface_no:'',
-                is_new:'已有型号',
+                is_new:'',
+                model:'',
+                model_id:'',
                 volume:'',
                 width:'',
                 height:'',
                 dtuCode:'',
                 dtuState:''
             },
-            hasType:'',
-            newType:'',
             set_add_rule: {                 //编辑/添加 表单验证
                 code: [
                     { required: true, message: '请输入货柜编号', trigger: 'blur' }
@@ -274,29 +274,41 @@ export default {
         handleSizeChange(val) {
             this.searchForm.limit = val;
             this.getList();
-            console.log(`每页 ${val} 条`);
         },
         handleCurrentChange(val) {
             this.searchForm.page = val;
             this.getList();
-            console.log(`当前页: ${val}`);
         },
 
         /** 弹窗 -- 取消事件 */
         set_add_cancel(){
             this.set_add_form = {
-                type:'',
+                surface_no:'',
+                is_new:'',
+                model:'',
+                model_id:'',
                 volume:'',
-                specifications:'',
-                layer:'',
-                unitprice:'',
-                number:''
+                width:'',
+                height:'',
+                dtuCode:'',
+                dtuState:''
             }
             this.set_add_visible = false;
         },
         /** 弹窗 -- 确认事件 */
         set_add_sure(){
-            console.log(this.set_add_form)
+            if(this.set_add_form.is_new==0){        //已有型号 需将model修改为空
+                this.set_add_form.model = '';
+            }else{                                  //新型号 需将model_id修改为空
+                this.set_add_form.model_id = '';
+            }
+            requestData('/api/container/config',{
+                ...this.set_add_form
+            },'get').then((res)=>{
+                console.log(res)
+            },(err)=>{
+                console.log(err)
+            })
             this.set_add_visible = false;
         }
     }

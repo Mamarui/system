@@ -22,7 +22,7 @@
         </el-header>
         <el-main class="main">
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
-                <el-table-column prop="orderId" label="订单号" align="center"></el-table-column>
+                <el-table-column prop="order_no" label="订单号" align="center"></el-table-column>
                 <el-table-column prop="total" label="订单金额(元)" align="center"></el-table-column>
                 <el-table-column prop="gmt_created" label="支付时间" align="center"></el-table-column>
                 <el-table-column prop="platform_fee" label="平台收入(元)" align="center"></el-table-column>
@@ -43,7 +43,7 @@
                 <div class="userInfo infoBox">
                     <p><span>订单用户 ：</span>{{source.customer}}</p>
                     <p><span>用户手机 ：</span>{{source.phone}}</p>
-                    <p><span>订单号 ：</span>{{source.orderId}}</p>
+                    <p><span>订单号 ：</span>{{source.order_no}}</p>
                     <p><span>订单状态 ：</span>{{source.order_status}}</p>
                     <p><span>交易状态 ：</span>{{source.trade_status}}</p>
                     <p><span>订单金额 ：</span>{{source.total}}</p>

@@ -30,7 +30,7 @@
             <el-table :data="tableData" tooltip-effect="dark" style="width: 100%" border>
                 <el-table-column prop="name" label="订单用户" align="center"></el-table-column>
                 <el-table-column prop="phone" label="用户手机" align="center" width="120"></el-table-column>
-                <el-table-column prop="orderId" label="订单号" align="center"></el-table-column>
+                <el-table-column prop="order_no" label="订单号" align="center"></el-table-column>
                 <el-table-column prop="order_status" label="订单状态" align="center" width="100"></el-table-column>
                 <!-- <el-table-column prop="orderprice" label="订单金额" align="center"></el-table-column> -->
                 <el-table-column prop="total" label="订单商品数" align="center" width="100"></el-table-column>

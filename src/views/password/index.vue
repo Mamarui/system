@@ -77,7 +77,7 @@ export default {
       loading: false,
       passwordType: 'password',
 	  redirect: undefined,
-	  codeUrl:'http://47.105.134.186:8080/scm/api/captcha/getcode?phone=18280126773',		//获取图片验证码地址（上正式要修改）
+	  codeUrl:'http://scm.irobotzz.com',		//获取图片验证码地址（上正式要修改）
 	  defaultUrl:'@/assets/imgs/default.png'
     }
   },
@@ -104,7 +104,7 @@ export default {
 		})
 	},
 	getPiccode(){
-		this.codeUrl = 'http://47.105.134.186:8080/scm/api/captcha/getcode?phone='+this.loginForm.phone+'&d='+new Date().getTime();
+		this.codeUrl = 'http://scm.irobotzz.com/api/captcha/getcode?phone='+this.loginForm.phone+'&d='+new Date().getTime();
 		// this.codeUrl = 'http://localhost:8081/api/captcha/getcode?d='+new Date().getTime()+'&phone='+this.loginForm.phone;
 	},
     handleLogin() {

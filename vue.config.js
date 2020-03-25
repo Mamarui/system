@@ -52,7 +52,7 @@ module.exports = {
     // },
     proxy: {
       '/api':{
-        target:'http://47.105.134.186:8080/scm/',
+        target:'http://scm.irobotzz.com',
         changeOrigin:true,//是否跨域
         toProxy:true,   //将绝对URL传递给path（用于代理）
         pathRewrite:{
