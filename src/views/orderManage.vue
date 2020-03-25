@@ -4,11 +4,13 @@
             <el-form :inline="true" :model="searchForm" class="form">
                 <el-form-item label="订单状态">
                     <el-select v-model="searchForm.order_status">
+                        <el-option label="全部" value=""></el-option>
                         <el-option :label="item" value="index" v-for="(item,index) in order_status" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="交易状态">
                     <el-select v-model="searchForm.trade_status">
+                        <el-option label="全部" value=""></el-option>
                         <el-option :label="item" value="index" v-for="(item,index) in trade_status" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
@@ -22,7 +24,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
-                    <el-button type="primary" @click="exportXLS">XLS导出</el-button>
+                    <!-- <el-button type="primary" @click="exportXLS">XLS导出</el-button> -->
                 </el-form-item>
             </el-form>
         </el-header>

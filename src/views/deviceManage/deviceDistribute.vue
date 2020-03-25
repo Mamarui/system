@@ -4,16 +4,19 @@
             <el-form :inline="true" :model="searchForm" class="form">
                 <el-form-item label="货柜型号">
                     <el-select v-model="searchForm.model_id">
+                        <el-option label="全部" value=""></el-option>
                         <el-option :label="item.model" :value="item.model_id" v-for="(item,index) in type" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="货柜状态">
                     <el-select v-model="searchForm.dto_status">
+                        <el-option label="全部" value=""></el-option>
                         <el-option :label="item" :value="index" v-for="(item,index) in state" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="商家绑定">
                     <el-select v-model="searchForm.bind_status">
+                        <el-option label="全部" value=""></el-option>
                         <el-option :label="item.name" :value="item.id" v-for="(item,index) in business" :key="index"></el-option>
                     </el-select>
                 </el-form-item>

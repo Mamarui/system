@@ -12,7 +12,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
-                    <el-button type="primary" @click="exportXLS">XLS导出</el-button>
+                    <!-- <el-button type="primary" @click="exportXLS">XLS导出</el-button> -->
                 </el-form-item>
             </el-form>
         </el-header>

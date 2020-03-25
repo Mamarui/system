@@ -4,6 +4,7 @@
             <el-form :inline="true" :model="searchForm" class="form">
                 <el-form-item>
                     <el-select v-model="timeType">
+                        <el-option label="全部" value=""></el-option>
                         <el-option label="支付时间" value="0"></el-option>
                         <el-option label="结算时间" value="1"></el-option>
                     </el-select>
@@ -16,7 +17,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="search"><svg-icon icon-class="search" style="margin-right:5px;"/>查询</el-button>
-                    <el-button type="primary" @click="exportXLS">XLS导出</el-button>
+                    <!-- <el-button type="primary" @click="exportXLS">XLS导出</el-button> -->
                 </el-form-item>
             </el-form>
         </el-header>
