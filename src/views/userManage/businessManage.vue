@@ -76,7 +76,7 @@
                 <el-form-item label="管理货柜" prop="manager">
                     <span>（共{{set_form.container_total}}个货柜）</span>
                     <div class="bigbox">
-                        <section class="everybox" v-for="(item,index) in set_form.container_list">
+                        <section class="everybox" v-for="(item,index) in set_form.container_list" :key="index">
                             <div class="smallbox"><span>{{item.total}}</span></div>
                             <span>{{item.NAME}}</span>
                         </section>
@@ -375,7 +375,6 @@ export default {
                 id:id
             },'get').then((res)=>{
                 if(res.status==200){
-                    this.getCity(this.set_form.province);
                     if(type=='view'){
                         this.set_form = res.data;
                         this.view_visible = true;
@@ -387,6 +386,7 @@ export default {
                         this.add_edit_form.province = res.data.province;
                         this.add_edit_form.city = res.data.city;
                     }
+                    this.getCity(res.data.province);
                 }else{
                     this.$message.error(res.message);
                 }
