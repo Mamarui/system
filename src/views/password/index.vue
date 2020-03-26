@@ -70,6 +70,11 @@ export default {
         password: '123456',
 		code:''
       },
+	//   loginForm: {
+    //     phone: '',
+    //     password: '',
+	// 	code:''
+    //   },
       loginRules: {
         phone: [{ required: true, trigger: 'blur', validator: validateMobile }],
 		password: [{ required: true, trigger: 'blur', validator: validatePassword }]
@@ -148,13 +153,8 @@ export default {
 
 $bg:#283443;
 $light_gray:#fff;
-$cursor: #fff;
+$cursor: #454545;
 
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
-  }
-}
 
 /* reset element-ui css */
 .login-container {
@@ -171,126 +171,121 @@ $cursor: #fff;
 		padding: 12px 5px 12px 15px;
 		color: $bg;
 		height: 47px;
-		caret-color: $cursor;
-
-		&:-webkit-autofill {
-			box-shadow: 0 0 0px 1000px $bg inset !important;
-			-webkit-text-fill-color: $cursor !important;
-		}
+			&:-webkit-autofill {
+				box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.1) inset !important;
+				-webkit-text-fill-color: $cursor !important;
+			}
 		}
 	}
 
 	.el-form-item {
 		border: 1px solid rgba(255, 255, 255, 0.1);
-		background: rgba(0, 0, 0, 0.05);
+		background: rgba(0, 0, 0, 0.1);
 		border-radius: 5px;
+    	color: #454545;
 		width: 75%;
 	}
 }
 </style>
 
-<style lang="scss" scoped>
-	$bg:#2d3a4b;
-	$dark_gray:#889aa4;
-	$light_gray:#eee;
-
-.login-container {
-	min-height: 100%;
-	width: 100%;
-	background-color: #8896B3;
-	overflow: hidden;
-	
-	.loginBox{
-		width: 60%;
-		margin: 10% auto;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-
-		.login-banner{
-			width: 620px;
-			height: 550px;
-			background-image: url('../../assets/imgs/banner.jpg');
-			background-size: 100% 100%;
-			position: relative;
-			margin: 0 auto;
-			opacity: 0.7;
-			border-top-left-radius: 10px;
-			border-bottom-left-radius: 10px;
-		}
-
-		.login-form {
-			position: relative;
-			width: 540px;
-			height: 550px;
-			max-width: 100%;
-			// padding: 160px 35px 0;
-			margin: 0 auto;
-			overflow: hidden;
-			background-color: #e7e5e5;
-			border-top-right-radius: 10px;
-			border-bottom-right-radius: 10px;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		.tips {
-			font-size: 14px;
-			color: #fff;
-			margin-bottom: 10px;
-
-			span {
-			&:first-of-type {
-				margin-right: 16px;
-			}
-			}
-		}
-
-		.svg-container {
-			padding: 6px 5px 6px 15px;
-			color: $dark_gray;
-			vertical-align: middle;
-			width: 30px;
-			display: inline-block;
-		}
-
-		.title-container {
-			position: relative;
-
-			.title {
-				font-size: 28px;
-				color: $bg;
-				margin: 80px auto 40px auto;
-				text-align: center;
-				font-weight: bold;
-			}
-		}
-
-		.show-pwd {
-			position: absolute;
-			right: 10px;
-			top: 7px;
-			font-size: 16px;
-			color: $dark_gray;
-			cursor: pointer;
-			user-select: none;
-		}
-
-		.codeInput{
+<style lang="scss">
+	.login-container {
+		min-height: 100%;
+		width: 100%;
+		background-color: #8896B3;
+		overflow: hidden;
+		
+		.loginBox{
 			width: 60%;
-		}
+			margin: 10% auto;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
 
-		.codeBox{
-			width: 26%;
-			height: 35px;
-			float: right;
-			margin-top: 8px;
-			img{
-				width: 100%;
-				height: 100%
+			.login-banner{
+				width: 620px;
+				height: 550px;
+				background-image: url('../../assets/imgs/banner.jpg');
+				background-size: 100% 100%;
+				position: relative;
+				margin: 0 auto;
+				opacity: 0.7;
+				border-top-left-radius: 10px;
+				border-bottom-left-radius: 10px;
+			}
+
+			.login-form {
+				position: relative;
+				width: 540px;
+				height: 550px;
+				max-width: 100%;
+				// padding: 160px 35px 0;
+				margin: 0 auto;
+				overflow: hidden;
+				background-color: #e7e5e5;
+				border-top-right-radius: 10px;
+				border-bottom-right-radius: 10px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.tips {
+				font-size: 14px;
+				color: #fff;
+				margin-bottom: 10px;
+
+				span {
+				&:first-of-type {
+					margin-right: 16px;
+				}
+				}
+			}
+
+			.svg-container {
+				padding: 6px 5px 6px 15px;
+				color: #889aa4;
+				vertical-align: middle;
+				width: 30px;
+				display: inline-block;
+			}
+
+			.title-container {
+				position: relative;
+
+				.title {
+					font-size: 28px;
+					color: #2d3a4b;
+					margin: 80px auto 40px auto;
+					text-align: center;
+					font-weight: bold;
+				}
+			}
+
+			.show-pwd {
+				position: absolute;
+				right: 10px;
+				top: 7px;
+				font-size: 16px;
+				color: #889aa4;
+				cursor: pointer;
+				user-select: none;
+			}
+
+			.codeInput{
+				width: 60%;
+			}
+
+			.codeBox{
+				width: 26%;
+				height: 35px;
+				float: right;
+				margin-top: 8px;
+				img{
+					width: 100%;
+					height: 100%
+				}
 			}
 		}
 	}
-}
 </style>

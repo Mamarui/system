@@ -264,7 +264,7 @@ export default {
 						this.date_ = this.year_one;
 					}
 				}else{
-					this.date_ = this.year_one + '-' + this.year_two;
+					this.date_ = this.year_one + '~' + this.year_two;
 				}
 			}else if(type==0?this.year_two:this.year_one){
 				type==0 ?
@@ -275,6 +275,7 @@ export default {
 				this.date_ = this.year_one : 
 				this.date_ = this.year_two;
 			}
+			this.initCharts3();
 		},
 		/**筛选条件 月 */
 		getMonths(type){
@@ -287,7 +288,7 @@ export default {
 						this.date_ = this.month_one;
 					}
 				}else{
-					this.date_ = this.month_one + '-' + this.month_two;
+					this.date_ = this.month_one + '~' + this.month_two;
 				}
 			}else if(type==0?this.month_two:this.month_one){
 				type==0 ?
@@ -298,10 +299,12 @@ export default {
 				this.date_ = this.month_one : 
 				this.date_ = this.month_two;
 			}
+			this.initCharts3();
 		},
 		/**筛选条件 日 */
 		getDayOne(){
 			this.date_ = this.day_one;
+			this.initCharts3();
 		},
 		/**切换年月日的button 控制折线图展示 */
 		changeStates(type){
