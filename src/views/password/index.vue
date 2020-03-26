@@ -1,7 +1,6 @@
 <template>
   <div class="login-container">
 	  <div class="loginBox">
-		<div class="login-banner"></div>
 		<el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
 			<div class="title-container">
@@ -147,52 +146,12 @@ export default {
 }
 </script>
 
-<style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
-$bg:#283443;
-$light_gray:#fff;
-$cursor: #454545;
-
-
-/* reset element-ui css */
-.login-container {
-	.el-input {
-		display: inline-block;
-		height: 47px;
-		width: 85%;
-
-		input {
-		background: transparent;
-		border: 0px;
-		-webkit-appearance: none;
-		border-radius: 0px;
-		padding: 12px 5px 12px 15px;
-		color: $bg;
-		height: 47px;
-			&:-webkit-autofill {
-				box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0.1) inset !important;
-				-webkit-text-fill-color: $cursor !important;
-			}
-		}
-	}
-
-	.el-form-item {
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		background: rgba(0, 0, 0, 0.1);
-		border-radius: 5px;
-    	color: #454545;
-		width: 75%;
-	}
-}
-</style>
 
 <style lang="scss">
 	.login-container {
-		min-height: 100%;
-		width: 100%;
-		background-color: #8896B3;
+		height: 100vh;
+		width: 100vw;
+		background-color: #283443;
 		overflow: hidden;
 		
 		.loginBox{
@@ -219,15 +178,21 @@ $cursor: #454545;
 				width: 540px;
 				height: 550px;
 				max-width: 100%;
-				// padding: 160px 35px 0;
 				margin: 0 auto;
 				overflow: hidden;
 				background-color: #e7e5e5;
-				border-top-right-radius: 10px;
-				border-bottom-right-radius: 10px;
+				border-radius: 10px;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
+				.el-form-item {
+					border-radius: 5px;
+			    	color: #454545;
+					width: 75%;
+					.el-input{
+						width: 90%;
+					}
+				}
 			}
 
 			.tips {
@@ -236,14 +201,14 @@ $cursor: #454545;
 				margin-bottom: 10px;
 
 				span {
-				&:first-of-type {
-					margin-right: 16px;
-				}
+					&:first-of-type {
+						margin-right: 16px;
+					}
 				}
 			}
 
 			.svg-container {
-				padding: 6px 5px 6px 15px;
+				padding: 6px 5px 6px 10px;
 				color: #889aa4;
 				vertical-align: middle;
 				width: 30px;
@@ -264,7 +229,7 @@ $cursor: #454545;
 
 			.show-pwd {
 				position: absolute;
-				right: 10px;
+				right: 20px;
 				top: 7px;
 				font-size: 16px;
 				color: #889aa4;
@@ -273,14 +238,15 @@ $cursor: #454545;
 			}
 
 			.codeInput{
-				width: 60%;
+				width: 60%!important;
 			}
 
 			.codeBox{
 				width: 26%;
 				height: 35px;
-				float: right;
-				margin-top: 8px;
+				position: absolute;
+				top: 10px;
+				right: 6px;
 				img{
 					width: 100%;
 					height: 100%
