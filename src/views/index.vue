@@ -308,6 +308,7 @@ export default {
 		},
 		/**切换年月日的button 控制折线图展示 */
 		changeStates(type){
+			this.date_ = '';
 			switch (type) {
 				case 'year':
 					this.year = true;
